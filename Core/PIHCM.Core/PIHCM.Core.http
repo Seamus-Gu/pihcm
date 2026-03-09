@@ -1,0 +1,6 @@
+@PIHCM.Core_HostAddress = http://localhost:5246
+
+GET {{PIHCM.Core_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

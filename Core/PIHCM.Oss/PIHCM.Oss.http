@@ -1,0 +1,6 @@
+@PIHCM.Oss_HostAddress = http://localhost:5188
+
+GET {{PIHCM.Oss_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

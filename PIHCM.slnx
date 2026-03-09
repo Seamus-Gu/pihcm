@@ -1,0 +1,24 @@
+<Solution>
+  <Folder Name="/API/">
+    <Project Path="Api/Api.Core/Api.Core.csproj" Id="4681aac5-7e3f-495d-ad63-ce2294df518c" />
+  </Folder>
+  <Folder Name="/Auth/">
+    <Project Path="Auth/PIHCM.Auth/PIHCM.Auth.csproj" Id="0322b952-4e52-4e45-a9dc-bd34d71ef94b" />
+  </Folder>
+  <Folder Name="/Core/">
+    <Project Path="Core/PIHCM.Core/PIHCM.Core.csproj" Id="0fc19030-729f-4155-9e2f-f9e38e2a8340" />
+    <Project Path="Core/PIHCM.Gen/PIHCM.Gen.csproj" Id="4a429f3c-824a-4c9b-bec0-8f37eb5ef971" />
+    <Project Path="Core/PIHCM.Job/PIHCM.Job.csproj" Id="1cb27bed-735a-40dd-80c8-8072bfe4e0e0" />
+    <Project Path="Core/PIHCM.Oss/PIHCM.Oss.csproj" Id="32765317-f633-46f0-8d8b-64c035652cfc" />
+  </Folder>
+  <Folder Name="/Framework/">
+    <Project Path="Framework/Framework.Platform/Framework.Platform.csproj" Id="92bd355b-b3a0-4a22-8ac7-89573e7a7f46" />
+    <Project Path="Framework/Framework.Consul/Framework.Consul.csproj" Id="fe853b92-ccb4-4e16-9805-f4cc937d7d13" />
+    <Project Path="Framework/Framework.Core/Framework.Core.csproj" Id="9d9e357a-10ac-4197-b04d-e42e18d977e9" />
+    <Project Path="Framework/Framework.IdGenerater/Framework.IdGenerater.csproj" Id="b17a49b6-67a1-4214-a8d7-8541c3ef2b7b" />
+    <Project Path="Framework/Framework.Redis/Framework.Redis.csproj" Id="b298c694-d825-4846-83e6-b42888a42fcb" />
+    <Project Path="Framework/Framework.SqlSugar/Framework.SqlSugar.csproj" Id="bc4af11e-11a4-4707-a846-836d897407a8" />
+  </Folder>
+  <Folder Name="/Gateway/" />
+  <Folder Name="/Modules/" />
+</Solution>
