@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace Framework.Core.Extensions
+namespace Framework.Core
 {
     public static class ApplicationExtension
     {

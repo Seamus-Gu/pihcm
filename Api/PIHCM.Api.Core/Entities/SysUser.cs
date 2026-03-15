@@ -1,8 +1,4 @@
-﻿// <author>Seamus</author>
-// <date>2025/7/29 9:48:08/date>
-// <description></description>
-
-namespace Seed.Core.Entities
+﻿namespace PIHCM.Api.Core.Entities
 {
     public class SysUser : BaseEntity
     {

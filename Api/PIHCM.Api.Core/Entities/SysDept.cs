@@ -1,4 +1,4 @@
-﻿namespace Seed.Core.Entities
+﻿namespace PIHCM.Api.Core.Entities
 {
     /// <summary>
     /// 表示系统中的部门实体，支持树形结构以反映部门层级关系。用于管理和组织部门相关信息。

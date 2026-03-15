@@ -1,35 +1,39 @@
-﻿namespace Framework.Core.Enums
+﻿namespace Framework.Core
 {
     /// <summary>
-    /// Specifies error codes that represent various error conditions within the application.
+    /// 定义一组用于表示常见错误类型的枚举值。
     /// </summary>
-    /// <remarks>Use this enumeration to identify and handle specific error scenarios in a type-safe manner.
-    /// The exact set of error codes is defined by the members of this enumeration.</remarks>
+    /// <remarks>该枚举用于标识系统中常见的错误状态，如参数缺失、认证失败、用户状态异常等。可用于统一错误处理和错误码管理，便于前后端或日志系统识别和处理不同类型的错误。</remarks>
     public enum ErrorEnum
     {
         /// <summary>
-        /// 必填
+        /// 指示该成员为必需项。
         /// </summary>
+        /// <remarks>在使用此枚举值时，调用方应确保相关字段或属性已被正确赋值，否则可能导致验证失败或运行时异常。</remarks>
         Required = 000001,
 
         /// <summary>
-        /// 无法获取Consul配置项
+        /// 表示未加载 Consul 的状态代码。
         /// </summary>
+        /// <remarks>可用于指示系统在初始化或运行过程中未检测到 Consul 服务的情形。通常用于错误处理或状态判断。</remarks>
         NotLoadConsul = 000002,
 
         /// <summary>
-        /// 无法获取登录用户
+        /// 表示未登录用户的状态代码。
         /// </summary>
+        /// <remarks>用于指示当前操作或请求未关联已登录用户。可用于权限校验、异常处理等场景。</remarks>
         NoLoginUser = 000003,
 
         /// <summary>
-        /// 没有Token
+        /// 表示未提供令牌的状态代码。
         /// </summary>
+        /// <remarks>通常用于指示请求缺少身份验证令牌时的错误状态。调用方应确保在需要时正确传递令牌以避免此状态。</remarks>
         NoToken = 010001,
 
         /// <summary>
-        /// Token 未通过校验
+        /// 表示令牌未通过验证的状态码。
         /// </summary>
+        /// <remarks>当请求中的令牌无效、过期或未通过验证时，使用此状态码。调用方应检查令牌的有效性并根据需要重新获取或刷新令牌。</remarks>
         TokenNotValidate = 010002,
 
         /// <summary>

@@ -6,6 +6,10 @@ using Microsoft.Extensions.Hosting;
 
 namespace Framework.Core
 {
+    /// <summary>
+    /// 提供用于初始化和配置应用程序内部依赖项的静态方法和字段。该类型用于管理应用程序的服务集合、配置和主机环境等核心对象。
+    /// </summary>
+    /// <remarks>此类型仅供框架内部使用，不建议在应用程序代码中直接访问。通过集中管理服务和环境信息，简化了应用程序的初始化流程。线程安全性需由调用方保证。</remarks>
     internal class InternalApp
     {
         /// <summary>

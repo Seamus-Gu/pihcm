@@ -14,6 +14,7 @@
   <Folder Name="/Framework/">
     <Project Path="Framework/Framework.Consul/Framework.Consul.csproj" Id="fe853b92-ccb4-4e16-9805-f4cc937d7d13" />
     <Project Path="Framework/Framework.Core/Framework.Core.csproj" Id="9d9e357a-10ac-4197-b04d-e42e18d977e9" />
+    <Project Path="Framework/Framework.Grpc/Framework.Grpc.csproj" Id="f6225d35-0aa2-4be1-95a3-39571c4594e8" />
     <Project Path="Framework/Framework.IdGenerater/Framework.IdGenerater.csproj" Id="b17a49b6-67a1-4214-a8d7-8541c3ef2b7b" />
     <Project Path="Framework/Framework.Platform/Framework.Platform.csproj" Id="92bd355b-b3a0-4a22-8ac7-89573e7a7f46" />
     <Project Path="Framework/Framework.Redis/Framework.Redis.csproj" Id="b298c694-d825-4846-83e6-b42888a42fcb" />
@@ -32,4 +33,7 @@
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
   </Folder>
+  <Project Path="docker-compose.dcproj" Id="7ab08720-d13c-41eb-a8b0-260b4ec30ecf">
+    <Build />
+  </Project>
 </Solution>

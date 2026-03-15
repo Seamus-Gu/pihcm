@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Text;
 
-namespace Framework.Core.Utils
+namespace Framework.Core
 {
     /// <summary>
     /// 提供用于不同命名风格（如 snake_case、CamelCase 和 kebab-case）之间转换的静态方法。适用于需要在多种命名规范之间进行字符串格式转换的场景。内部类，仅供程序集内使用。

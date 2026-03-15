@@ -1,4 +1,4 @@
-﻿namespace Framework.Core.Constants
+﻿namespace Framework.Core
 {
     public class FrameworkConstant
     {

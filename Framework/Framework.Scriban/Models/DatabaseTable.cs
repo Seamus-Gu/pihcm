@@ -15,7 +15,6 @@ public sealed class DatabaseTable
     /// </summary>
     public string Name { get; init; } = string.Empty;
 
-
     /// <summary>
     /// 实体名称
     /// </summary>
@@ -33,7 +32,7 @@ public sealed class DatabaseTable
     public IReadOnlyList<DatabaseColumn> Columns { get; init; } = [];
 
     /// <summary>
-    /// 表名驼峰命名
+    /// 表名驼峰命名表示
     /// </summary>
     public string CamelName
     {
@@ -43,9 +42,6 @@ public sealed class DatabaseTable
         }
     }
 
-    /// <summary>
-    /// 表名Kebab命名
-    /// </summary>
     public string KebabName
     {
         get

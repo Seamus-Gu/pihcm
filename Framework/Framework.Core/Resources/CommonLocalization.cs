@@ -1,7 +1,6 @@
-﻿using Framework.Core.Enums;
-using System.Resources;
+﻿using System.Resources;
 
-namespace Framework.Core.Resources
+namespace Framework.Core
 {
     public class CommonLocalization
     {
