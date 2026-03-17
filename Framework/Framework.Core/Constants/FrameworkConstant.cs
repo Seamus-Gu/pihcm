@@ -2,7 +2,12 @@
 {
     public class FrameworkConstant
     {
+        // 项目前缀
+        public const string FRAMEWORK_PREFIX = "Seed";
+
+        // App
         public const string APP = "App";
+        public const string SERVICE = "Service";
 
         //#region Consul
 
@@ -37,7 +42,6 @@
         //#endregion Swagger
 
 
-        //public const string FRAMEWORK_PREFIX = "Seed";
         //public const string DB_CONFIG = "Datebase";
         //public const string REDIS = "Redis";
         //public const string LOCALIZATION = "Localization";
@@ -46,7 +50,6 @@
         //public const string EMAIL = "Email";
         //public const string JOB = "Job";
         //public const string SECURITY = "Security";
-        //public const string SERVICE = "Service";
 
         //public const string HEALTH_ROUTE = "/health";
 

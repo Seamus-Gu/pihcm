@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Framework.WebApi;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -49,7 +51,7 @@ namespace Framework.Platform
             builder.Services
                 .AddControllers(options =>
                 {
-                    //options.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
+                    options.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
                     //options.Filters.Add(new GlobalActionFilter());
                     //options.Filters.Add(new GlobalExceptionFilter());
                 })
