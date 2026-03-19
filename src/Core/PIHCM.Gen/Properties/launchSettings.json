@@ -16,15 +16,16 @@
         "dotnetRunMessages": true,
         "applicationUrl": "https://localhost:5030;http://localhost:19030"
     },
-    "Container (Dockerfile)": {
-      "commandName": "Docker",
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+    "Container": {
+        "commandName": "Docker",
+        "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
         "environmentVariables": {
             "ASPNETCORE_HTTPS_PORTS": "5030",
             "ASPNETCORE_HTTP_PORTS": "19030"
         },
-      "publishAllPorts": true,
-      "useSSL": true
+        "publishAllPorts": true,
+        "useSSL": true,
+        "containerRunArguments": "--network pihcm --name pihcm-gen",
     },
     "IIS Express": {
       "commandName": "IISExpress",

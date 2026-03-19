@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Framework.DI;
 using Framework.WebApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
@@ -39,9 +40,9 @@ namespace Framework.Platform
 
             // DI
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-            builder.Host.ConfigureContainer<ContainerBuilder>(builder =>
+            builder.Host.ConfigureContainer<ContainerBuilder>((context, containerBuilder) =>
             {
-                builder.InitAutofac();
+                containerBuilder.InitAutofac();
             });
 
             //// Orm

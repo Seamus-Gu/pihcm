@@ -1,6 +1,4 @@
 <Project>
     <PropertyGroup>
-        <ContainerFamily>alpine</ContainerFamily>
-        <ContainerImageTags>1.0.0;latest</ContainerImageTags>
     </PropertyGroup>
 </Project>
