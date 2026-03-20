@@ -9,12 +9,12 @@ namespace Framework.Core
         /// <summary>
         /// 应用名
         /// </summary>
-        public static string AppName = InternalApp._hostEnvironment!.ApplicationName;
+        public static string AppName = InternalApp._applicationName;
 
         /// <summary>
         /// 是否开发环境
         /// </summary>
-        public static bool IsDevelop = InternalApp._hostEnvironment!.IsDevelopment();
+        public static bool IsDevelop = InternalApp._isDevelop;
 
         /// <summary>
         /// 全局配置选项

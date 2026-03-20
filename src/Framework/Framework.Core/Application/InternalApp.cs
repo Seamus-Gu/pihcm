@@ -13,6 +13,16 @@ namespace Framework.Core
     internal class InternalApp
     {
         /// <summary>
+        /// 应用程序名称
+        /// </summary>
+        internal static string _applicationName = string.Empty;
+
+        /// <summary>
+        /// 是否处于开发环境
+        /// </summary>
+        internal static bool _isDevelop = false;
+
+        /// <summary>
         /// 应用服务
         /// </summary>
         internal static IServiceCollection _internalServices = default!;
@@ -47,6 +57,9 @@ namespace Framework.Core
         /// <param name="builder">WebApplicationBuilder 实例。</param>
         internal static void InitializeFromBuilder(WebApplicationBuilder builder)
         {
+            _applicationName = builder.Environment.ApplicationName;
+            _isDevelop = builder.Environment.IsDevelopment();
+
             _configuration = builder.Configuration;
             _internalServices = builder.Services;
             _hostEnvironment = _webHostEnvironment = builder.Environment;

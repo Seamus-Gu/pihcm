@@ -1,11 +1,10 @@
 ﻿using Consul;
-using Seed.Framework.Core;
 
-namespace Seed.Framework.Consul
+namespace Framework.Consul
 {
     internal static class KVPairExtension
     {
-        internal static IDictionary<string, string> ToConfigDIc(this KVPair result)
+        internal static IDictionary<string, string?> ToConfigDic(this KVPair result)
         {
             var stream = new MemoryStream(result.Value);
 

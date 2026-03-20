@@ -10,14 +10,14 @@
     },
     "Container": {
         "commandName": "Docker",
-        "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+        "launchBrowser": false,
         "environmentVariables": {
-            "ASPNETCORE_HTTPS_PORTS": "5030",
-            "ASPNETCORE_HTTP_PORTS": "19030"
+            "ASPNETCORE_URLS": "https://+:443;http://+:80"
         },
-        "publishAllPorts": true,
+        "httpPort": 19030,
+        "sslPort": 5030,
         "useSSL": true,
-        "containerRunArguments": "--network pihcm --name pihcm-gen"
+        "containerRunArguments": "--network pihcm --name pihcm_gen"
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json"

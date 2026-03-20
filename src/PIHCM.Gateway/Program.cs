@@ -7,6 +7,7 @@ var services = builder.Services;
 
 configuration.AddConsulConfiguration();
 
+
 services.AddCors(option =>
 {
     option.AddPolicy("cors", policy =>

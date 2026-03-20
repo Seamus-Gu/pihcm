@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Framework.Core;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Framework.Consul
@@ -13,7 +14,7 @@ namespace Framework.Consul
         /// <returns></returns>
         public static void AddServiceDiscovery(this IServiceCollection services)
         {
-            //services.AddScoped<IServiceDiscovery, ServiceDiscover>();
+            services.AddScoped<IServiceDiscovery, ServiceDiscover>();
             services.AddSingleton<IHostedService, DiscoveryHostedService>();
         }
     }

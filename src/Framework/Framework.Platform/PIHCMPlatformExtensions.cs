@@ -1,5 +1,7 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Framework.Consul;
+using Framework.Core;
 using Framework.DI;
 using Framework.WebApi;
 using Microsoft.AspNetCore.Builder;
@@ -21,13 +23,13 @@ namespace Framework.Platform
         /// <returns>配置完成的 WebApplicationBuilder 实例，可用于后续的应用程序构建和启动。</returns>
         public static WebApplicationBuilder AddPIHCMPlatform(this WebApplicationBuilder builder, Action<IServiceCollection, IConfiguration>? configureModules = null)
         {
-            //builder.InitApp();
+            builder.InitializeApp();
 
             //// 配置中心
             //builder.Configuration.AddConsulConfiguration();
 
-            //// Consul 客户端
-            //builder.Services.AddConsulClient();
+            // Consul 客户端
+            builder.Services.AddConsulClient();
 
             //// 日志
             //builder.Services.AddLog();
@@ -83,11 +85,11 @@ namespace Framework.Platform
             //    builder.Services.AddSwagger();
             //}
 
-            //// 健康监测
-            //builder.Services.AddHealthChecks();
+            // 健康监测
+            builder.Services.AddHealthChecks();
 
-            //// 服务发现
-            //builder.Services.AddServiceDiscovery();
+            // 服务发现
+            builder.Services.AddServiceDiscovery();
 
             ////
             //////builder.Services.AddMiniProfiler();
@@ -126,7 +128,7 @@ namespace Framework.Platform
 
             app.UseEndpoints(endpoints =>
             {
-                //endpoints.MapHealthChecks(FrameworkConstant.HEALTH_ROUTE);
+                endpoints.MapHealthChecks(FrameworkConstant.HEALTH_ROUTE);
                 endpoints.MapControllers();
                 //endpoints.MapMagicOnionService();
             });

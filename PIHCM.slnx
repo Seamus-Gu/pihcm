@@ -39,4 +39,7 @@
         <Project Path="src/Modules/PIHCM.Payroll/PIHCM.Payroll.csproj" Id="7f77a91e-582f-411f-9dfb-fdfdcc0c3524" />
     </Folder>
     <Folder Name="/tests/" />
+    <Project Path="docker-compose.dcproj">
+        <Build />
+    </Project>
 </Solution>

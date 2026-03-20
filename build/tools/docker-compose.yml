@@ -1,0 +1,64 @@
+volumes:
+    redis_data:
+    consul_data:
+
+x-hosts: &self-hosts
+    cap_add:
+        - SYS_PTRACE
+    logging:
+        driver: "json-file" #默认的文件日志驱动
+        options:
+            max-size: "256m"
+            max-file: "3"
+
+services:
+    #   pihcm_redis:
+    #     image: ${DOCKER_REGISTRY}/tools/redis:7
+    #     container_name: pihcm_redis
+    #     restart: always
+    #     ports:
+    #       - ${REDIS_PORT}:6379
+    #     volumes:
+    #       - ${CONFIG_DIR}/redis:/etc/redis
+    #       - redis_data:/data
+    #       - /etc/localtime:/etc/localtime:ro
+    #     command: redis-server /etc/redis/redis.conf --requirepass ${REDIS_PASSWORD}
+    #     healthcheck:
+    #       test: [ "CMD", "redis-cli", "ping" ]
+    #       interval: 10s
+    #       timeout: 10s
+    #       retries: 5
+    #       start_period: 10s
+    #     networks:
+    #       - ihcm
+    #     <<: *self-hosts
+
+    pihcm_consul:
+        image: ${DOCKER_REGISTRY}/tools/consul:1.15.4
+        container_name: pihcm_consul
+        restart: always
+        volumes:
+            - ${DEVELOP_PATH}/Consul/server.json:/consul/config/server.json
+            - ${DEVELOP_PATH}/Consul/Data:/consul/data
+            - ${DEVELOP_PATH}/Consul/localtime:/etc/localtime:ro
+        ports:
+            - "${CONSUL_PORT}:8500"
+        #   - '${CONSUL_NODE_PORT}:8300'
+        #   - '${CONSUL_DNS_PORT}:8600'
+        command: agent -server -ui -bootstrap-expect=1 -client=0.0.0.0 -data-dir consul/data
+        healthcheck:
+            test:
+                ["CMD", "curl", "-f", "http://localhost:8500/v1/status/leader"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+            start_period: 30s
+        networks:
+            - pihcm
+        <<: *self-hosts
+
+networks:
+    pihcm:
+        external: true
+        driver: bridge
+        name: pihcm

@@ -1,4 +1,5 @@
 ﻿using Consul;
+using Framework.Core;
 using Microsoft.Extensions.Configuration;
 using System.Net;
 
@@ -8,7 +9,7 @@ namespace Framework.Consul
     {
         private readonly IConsulClient _consulClient;
         private readonly string _serviceName;
-        private readonly string _env;
+        private readonly string _envName;
         private readonly TimeSpan _timerCycle;
         private ulong _lastIndex;
         private Task? _pollTask;
@@ -28,7 +29,7 @@ namespace Framework.Consul
             _consulClient = consulClient;
             _timerCycle = timerCycle;
             _serviceName = assemblyName;
-            _env = env;
+            _envName = env;
         }
 
         /// <summary>
@@ -52,13 +53,13 @@ namespace Framework.Consul
         /// <param name="configData"></param>
         private void LoadData(QueryResult<KVPair[]> queryRes)
         {
-            //var currentName = _env + DelimitersConstant.SLASH + _serviceName;
-            //var commonName = _env + DelimitersConstant.SLASH + FrameworkConstant.FRAMEWORK_PREFIX;
+            var currentName = _envName + DelimitersConstant.SLASH + _serviceName;
+            var commonName = _envName + DelimitersConstant.SLASH + FrameworkConstant.COMMON;
 
-            //var list = queryRes.Response.Where(t => t.Key == currentName || t.Key == commonName).ToList();
-            //Data = list.SelectMany(t => t.ToConfigDIc()).ToDictionary(t => t.Key, t => t.Value);
+            var list = queryRes.Response.Where(t => t.Key == currentName || t.Key == commonName).ToList();
+            Data = list.SelectMany(t => t.ToConfigDic()).ToDictionary(t => t.Key, t => t.Value);
 
-            //SetLastIndex(queryRes.LastIndex);
+            SetLastIndex(queryRes.LastIndex);
         }
 
         private async Task<QueryResult<KVPair[]>> GetKvPairList(bool waitForChange)
@@ -69,17 +70,16 @@ namespace Framework.Consul
                 WaitIndex = waitForChange ? _lastIndex : 0
             };
 
-            var result = await _consulClient.KV.List(_env, queryOptions).ConfigureAwait(false);
+            var result = await _consulClient.KV.List(_envName, queryOptions).ConfigureAwait(false);
 
             if (result.StatusCode == HttpStatusCode.OK)
             {
                 return result;
             }
 
-            //var message = string.Format(CommonLocalization.NotLoadConsul, result.StatusCode);
+            var message = string.Format(CommonLocalization.NotLoadConsul, result.StatusCode);
 
-            //throw new CodeException(ErrorEnum.NotLoadConsul.ToInt(), message);
-            throw new Exception("");
+            throw new CodeException(ErrorEnum.NotLoadConsul.ToInt(), message);
         }
 
         /// <summary>
@@ -91,16 +91,16 @@ namespace Framework.Consul
             {
                 var result = await GetKvPairList(true).ConfigureAwait(false);
 
-                //if (result.LastIndex > _lastIndex)
-                //{
-                //    var currentName = _env + DelimitersConstant.SLASH + _serviceName;
-                //    var commonName = _env + DelimitersConstant.SLASH + FrameworkConstant.FRAMEWORK_PREFIX;
+                if (result.LastIndex > _lastIndex)
+                {
+                    var currentName = _envName + DelimitersConstant.SLASH + _serviceName;
+                    var commonName = _envName + DelimitersConstant.SLASH + FrameworkConstant.FRAMEWORK_PREFIX;
 
-                //    var list = result.Response.Where(t => t.Key == commonName || t.Key == currentName).ToList();
-                //    Data = list.SelectMany(t => t.ToConfigDIc()).ToDictionary(t => t.Key, t => t.Value);
+                    var list = result.Response.Where(t => t.Key == commonName || t.Key == currentName).ToList();
+                    Data = list.SelectMany(t => t.ToConfigDic()).ToDictionary(t => t.Key, t => t.Value);
 
-                //    OnReload();
-                //}
+                    OnReload();
+                }
 
                 SetLastIndex(result.LastIndex);
             }

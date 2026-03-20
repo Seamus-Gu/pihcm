@@ -13,7 +13,7 @@
         /// <summary>
         /// Consul 端口
         /// </summary>
-        public int Port { get; set; }
+        public int Port { get; set; } = 8500;
 
         #region 配置中心
 

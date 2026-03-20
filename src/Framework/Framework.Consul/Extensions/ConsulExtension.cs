@@ -19,17 +19,20 @@ namespace Framework.Consul
         public static void AddConsulConfiguration(this IConfigurationBuilder configuration)
         {
             var appName = App.AppName;
-            var env = App.WebHostEnvironment.EnvironmentName;
+            var envName = App.WebHostEnvironment.EnvironmentName;
+
             var consulConfig = App.GetConfig<ConsulConfig>(FrameworkConstant.CONSUL);
 
             var consulClient = new ConsulClient(client =>
             {
-                var url = FrameworkConstant.HTTP + consulConfig.Host + DelimitersConstant.COLON + consulConfig.Port;
-                //Todo Consul身份验证 client.Token = "";
+                var url = $"{FrameworkConstant.HTTP}{consulConfig.Host}{DelimitersConstant.COLON}{consulConfig.Port}";
                 client.Address = new Uri(url);
+
+                // TODO: Consul身份验证
+                // client.Token = consulConfig.Token;
             });
 
-            var consulConfigSource = new ConsulConfigSource(consulClient, consulConfig.TimerCycle, appName, env);
+            var consulConfigSource = new ConsulConfigSource(consulClient, consulConfig.TimerCycle, appName, envName);
 
             configuration.Add(consulConfigSource);
         }
@@ -41,18 +44,20 @@ namespace Framework.Consul
         /// <param name="service">要向其添加 Consul 客户端服务的 IServiceCollection 实例。不能为空。</param>
         public static void AddConsulClient(this IServiceCollection service)
         {
-            //var consulConfig = App.GetConfig<ConsulConfig>(FrameworkConstant.CONSUL);
+            var consulConfig = App.GetConfig<ConsulConfig>(FrameworkConstant.CONSUL);
 
-            //service.AddSingleton<IConsulClient>(sp =>
-            //{
-            //    var url = FrameworkConstant.HTTP + consulConfig.Host + DelimitersConstant.COLON + consulConfig.Port;
+            service.AddSingleton<IConsulClient>(sp =>
+            {
+                var url = FrameworkConstant.HTTP + consulConfig.Host + DelimitersConstant.COLON + consulConfig.Port;
 
-            //    return new ConsulClient(client =>
-            //    {
-            //        //Todo Consul身份验证 client.Token = "";
-            //        client.Address = new Uri(url);
-            //    });
-            //});
+                return new ConsulClient(client =>
+                {
+                    client.Address = new Uri(url);
+
+                    // TODO: Consul身份验证
+                    // client.Token = consulConfig.Token;
+                });
+            });
         }
     }
 }

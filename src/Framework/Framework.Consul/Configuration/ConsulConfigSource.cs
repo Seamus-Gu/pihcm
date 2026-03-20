@@ -8,18 +8,18 @@ namespace Framework.Consul
         private readonly ConsulClient _consulClient;
         private readonly TimeSpan _timerCycle;
         private readonly string _assemblyName;
-        private readonly string _env;
+        private readonly string _envName;
 
         public ConsulConfigSource(
             ConsulClient consulClient,
             TimeSpan timerCycle,
             string assemblyName,
-            string env)
+            string envName)
         {
             _consulClient = consulClient;
             _timerCycle = timerCycle;
             _assemblyName = assemblyName;
-            _env = env;
+            _envName = envName;
         }
 
         public IConfigurationProvider Build(IConfigurationBuilder builder)
@@ -28,7 +28,7 @@ namespace Framework.Consul
                 _consulClient,
                 _timerCycle,
                 _assemblyName,
-                _env);
+                _envName);
         }
     }
 }

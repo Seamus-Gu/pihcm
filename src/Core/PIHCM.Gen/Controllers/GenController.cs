@@ -17,6 +17,12 @@ namespace PIHCM.Gen.Controllers
             _genService = genService;
         }
 
+        [HttpGet("list")]
+        public IActionResult List()
+        {
+            return Success();
+        }
+
         [HttpPost("generate-data")]
         public IActionResult GenerateTableAndColumns([FromBody] string sql)
         {
