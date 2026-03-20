@@ -8,19 +8,13 @@ namespace PIHCM.Gen.Controllers
     /// 响应处理逻辑。</remarks>
 
     [Route("v1/[controller]")]
-    public class GenController : BaseController
+    public class SQLController : BaseController
     {
         private readonly IGenService _genService;
 
-        public GenController(IGenService genService)
+        public SQLController(IGenService genService)
         {
             _genService = genService;
-        }
-
-        [HttpGet("list")]
-        public IActionResult List()
-        {
-            return Success();
         }
 
         [HttpPost("generate-data")]

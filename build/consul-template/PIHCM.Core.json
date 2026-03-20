@@ -1,0 +1,11 @@
+{
+    "Datebase": {
+        "ConnectionConfigs": [
+            {
+                "ConfigId": "1",
+                "DbType": 0,
+                "ConnectionString": "server=103.150.181.217;Database=seed-core;Uid=root;Pwd=sy236132;Port=5000"
+            }
+        ]
+    }
+}

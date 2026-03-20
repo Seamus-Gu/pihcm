@@ -23,10 +23,13 @@ namespace Framework.Platform
         /// <returns>配置完成的 WebApplicationBuilder 实例，可用于后续的应用程序构建和启动。</returns>
         public static WebApplicationBuilder AddPIHCMPlatform(this WebApplicationBuilder builder, Action<IServiceCollection, IConfiguration>? configureModules = null)
         {
+            var configuration = builder.Configuration;
+            var services = builder.Services;
+            var host = builder.Host;
+
             builder.InitializeApp();
 
-            //// 配置中心
-            //builder.Configuration.AddConsulConfiguration();
+            configuration.AddConsulConfiguration();
 
             // Consul 客户端
             builder.Services.AddConsulClient();
@@ -34,11 +37,10 @@ namespace Framework.Platform
             //// 日志
             //builder.Services.AddLog();
 
-            //// 添加HttpContext
-            //builder.Services.AddHttpContextAccessor();
+            services.AddHttpContextAccessor();
 
             //// 缓存注册
-            //builder.Services.AddCache(opeions.UseRedis);
+            //builder.Services.AddCache();
 
             // DI
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());

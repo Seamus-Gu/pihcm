@@ -11,7 +11,7 @@ namespace Framework.Consul
     public static class ConsulExtension
     {
         /// <summary>
-        /// 将 Consul 配置源添加到指定的配置生成器中，以便从 Consul 动态加载应用程序配置。
+        /// 使用 Consul 动态加载应用程序配置。
         /// </summary>
         /// <remarks>此方法允许应用程序通过 Consul 实现集中式配置管理。添加后，配置更改可在 Consul
         /// 中动态生效，无需重启应用。适用于需要分布式配置中心的场景。</remarks>

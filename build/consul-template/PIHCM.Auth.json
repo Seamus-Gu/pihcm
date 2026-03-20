@@ -1,0 +1,6 @@
+{
+    "Security": {
+        "FrontPrivateKey": "-----BEGIN RSA PRIVATE KEY-----MIIBPAIBAAJBAIozChz1AneLAb0moJ2tb0fXBbWAgvzI/R7yAEs8euj0i0JAkcM8qZT0UgHNzuh4tw2IKbQZnSN04VTduUrqxJ0CAwEAAQJAU/I25WoKipTchIovLDhKjUfWhu6+IlDwOFjlxs3BFzl3zWb55KzJDkhgqQUHocb8/jNTu5AHEi/3WbLmO2W//QIhAL2k44WKYeNZ6wnZBDxtASNhbipcpzrhI2UrvZDQedoTAiEAuo4PT7vgOQ6PBy/1qdIQwFa4EItgVc7No6JtKpD8vI8CIQCioyIsiDziyV50l5S2bZUoToo38jXInQPJ4/UymFen2QIhAK6Nx8PaTgX1Gl0mQd3BIU1mltlcICqJ0x3+F9kRSnn/AiEAsqTfp+J/JjzkktOt2E+XivfMlAjxyTIUoyuiw7UlkLs=-----END RSA PRIVATE KEY-----",
+        "ActivityTimeOut": 60
+    }
+}

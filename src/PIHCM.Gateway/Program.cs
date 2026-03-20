@@ -1,3 +1,5 @@
+using Ocelot.Configuration.File;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.InitializeApp();
@@ -6,7 +8,6 @@ var configuration = builder.Configuration;
 var services = builder.Services;
 
 configuration.AddConsulConfiguration();
-
 
 services.AddCors(option =>
 {
@@ -22,19 +23,19 @@ services.AddCors(option =>
 });
 
 //services.AddCache();
-//services.AddControllers();
+services.AddControllers();
 
 services.AddEndpointsApiExplorer();
 
 services.AddLocalization();
 
-//services.PostConfigure<FileConfiguration>(options =>
-//{
-//    var consulConfig = App.GetConfig<ConsulConfig>(FrameworkConstant.CONSUL);
+services.PostConfigure<FileConfiguration>(options =>
+{
+    var consulConfig = App.GetConfig<ConsulConfig>(FrameworkConstant.CONSUL);
 
-//    options.GlobalConfiguration.ServiceDiscoveryProvider.Host = consulConfig.Host;
-//    options.GlobalConfiguration.ServiceDiscoveryProvider.Port = consulConfig.Port;
-//});
+    options.GlobalConfiguration.ServiceDiscoveryProvider.Host = consulConfig.Host;
+    options.GlobalConfiguration.ServiceDiscoveryProvider.Port = consulConfig.Port;
+});
 
 services
     .AddOcelot()
@@ -85,6 +86,6 @@ app.UseRouting()
 //app.UseRouting();
 //app.UseHttpsRedirection();
 //app.UseAuthorization();
-//app.MapControllers();
+app.MapControllers();
 
 app.Run();

@@ -1,0 +1,16 @@
+{
+    "Logging": {
+        "LogLevel": {
+            "Default": "Information",
+            "Microsoft.AspNetCore": "Warning"
+        },
+        "File": {
+            "Enabled": true
+        }
+    },
+    "Redis": {
+        "Host": "host.docker.internal",
+        "Port": "6379",
+        "Password": "PSSRND20190710"
+    }
+}

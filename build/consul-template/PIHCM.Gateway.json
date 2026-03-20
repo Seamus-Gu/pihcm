@@ -1,0 +1,47 @@
+{
+    "Routes": [
+        {
+            "UseServiceDiscovery": true,
+            "DownstreamPathTemplate": "/{everything}",
+            "DownstreamScheme": "https",
+            "ServiceName": "PIHCM.Auth",
+            "LoadBalancerOptions": {
+                "Type": "LeastConnection"
+            },
+            "UpstreamPathTemplate": "/auth/{everything}",
+            "UpstreamHttpMethod": ["Get", "Post"],
+            "ReRoutesCaseSensitive": false,
+            "DangerousAcceptAnyServerCertificateValidator": true
+        },
+        {
+            "UseServiceDiscovery": true,
+            "DownstreamPathTemplate": "/{everything}",
+            "DownstreamScheme": "https",
+            "ServiceName": "PIHCM.Core",
+            "LoadBalancerOptions": {
+                "Type": "LeastConnection"
+            },
+            "UpstreamPathTemplate": "/core/{everything}",
+            "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"],
+            "ReRoutesCaseSensitive": false,
+            "DangerousAcceptAnyServerCertificateValidator": true
+        },
+        {
+            "UseServiceDiscovery": true,
+            "DownstreamPathTemplate": "/{everything}",
+            "DownstreamScheme": "https",
+            "ServiceName": "PIHCM.Gen",
+            "LoadBalancerOptions": {
+                "Type": "LeastConnection"
+            },
+            "UpstreamPathTemplate": "/gen/{everything}",
+            "UpstreamHttpMethod": ["Get", "Post"],
+            "ReRoutesCaseSensitive": false,
+            "DangerousAcceptAnyServerCertificateValidator": true
+        }
+    ],
+    "Security": {
+        "JwtSecurityKey": "ma8v4HqAEMOFTWY6sF013isL6wYiczX1Na5mTQLdB3bKXpyRhRSn3iStepOUSvmI",
+        "Whites": ["*/swagger.json", "/auth/v1/*"]
+    }
+}
