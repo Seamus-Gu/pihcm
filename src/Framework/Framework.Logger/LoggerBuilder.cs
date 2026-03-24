@@ -1,46 +1,81 @@
-﻿namespace Framework.Logger
+﻿using Framework.Core;
+using Serilog;
+using Serilog.Sinks.Grafana.Loki;
+
+namespace Framework.Logger
 {
     internal static class LoggerBuilder
     {
-        //public static ILogger CreateLogger()
-        //{
-        //    var logConfig = App.GetConfig<LogConfig>(FrameworkConstant.LOG_CONFIG);
-        //    var loggerConfiguration = InitLoggerConfiguration();
+        public static ILogger CreateLogger()
+        {
+            var logConfig = App.GetConfig<LogConfig>(FrameworkConstant.LOG_CONFIG);
+            var loggerConfiguration = InitLoggerConfiguration();
 
-        //    if (logConfig.File != null && logConfig.File.Enabled)
-        //    {
-        //        loggerConfiguration.AddFileLog(logConfig.File);
-        //    }
+            if (logConfig.File != null && logConfig.File.Enabled)
+            {
+                loggerConfiguration.AddFileLog(logConfig.File);
+            }
 
-        //    if (logConfig.ElasticSearch != null && logConfig.ElasticSearch.Enabled)
-        //    {
-        //        loggerConfiguration.AddElastic(logConfig.ElasticSearch);
-        //    }
+            if (logConfig.Loki != null && logConfig.Loki.Enabled)
+            {
+                loggerConfiguration.AddLoki(logConfig.Loki);
+            }
 
-        //    return loggerConfiguration.CreateLogger();
-        //}
+            return loggerConfiguration.CreateLogger();
+        }
 
-        //private static LoggerConfiguration InitLoggerConfiguration()
-        //{
-        //    var config = new LoggerConfiguration()
-        //      .MinimumLevel.Debug() // 捕获的最小日志级别
-        //      .WriteTo.Console();
+        private static LoggerConfiguration InitLoggerConfiguration()
+        {
+            var config = new LoggerConfiguration()
+              .MinimumLevel.Debug() // 捕获的最小日志级别
+              .WriteTo.Console();
 
-        //    return config;
-        //}
+            return config;
+        }
 
-        //private static void AddFileLog(this LoggerConfiguration loggerConfiguration, LogFileConfig fileConfig)
-        //{
-        //    loggerConfiguration
-        //        .WriteTo.File(fileConfig.FilePath,
-        //            rollingInterval: fileConfig.RollingInterval,
-        //            outputTemplate: fileConfig.OutPutTemplate,
-        //            retainedFileCountLimit: fileConfig.MaxRollingFiles,
-        //            retainedFileTimeLimit: fileConfig.RetainedTimeLimit,
-        //            rollOnFileSizeLimit: fileConfig.FileSizeLimitBytes != 0,
-        //            fileSizeLimitBytes: fileConfig.FileSizeLimitBytes
-        //            );
-        //}
+        private static void AddFileLog(this LoggerConfiguration loggerConfiguration, LogFileConfig fileConfig)
+        {
+            loggerConfiguration
+                .WriteTo.File(fileConfig.FilePath,
+                    rollingInterval: fileConfig.RollingInterval,
+                    outputTemplate: fileConfig.OutPutTemplate,
+                    retainedFileCountLimit: fileConfig.MaxRollingFiles,
+                    retainedFileTimeLimit: fileConfig.RetainedTimeLimit,
+                    rollOnFileSizeLimit: fileConfig.FileSizeLimitBytes != 0,
+                    fileSizeLimitBytes: fileConfig.FileSizeLimitBytes
+                    );
+        }
+
+        private static void AddLoki(this LoggerConfiguration loggerConfiguration, LogLokiConfig lokiConfig)
+        {
+            var labels = new List<LokiLabel>
+            {
+                new LokiLabel
+                {
+                    Key = "service",
+                    Value = App.AppName
+                },  // 服务名（如 order-service）
+                new LokiLabel
+                {
+                    Key = "instance",
+                    Value = Environment.MachineName
+                },
+                new LokiLabel
+                {
+                    Key = "environment",
+                    Value = Environment.MachineName
+                }
+            };
+
+
+            loggerConfiguration
+                .Enrich.FromLogContext()
+                .WriteTo.GrafanaLoki(lokiConfig.Url, labels)
+                .MinimumLevel.Information();
+
+            // 针对特定命名空间调整日志级别（可选）
+            //.MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
+        }
 
         //private static void AddElastic(this LoggerConfiguration loggerConfiguration, LogElasticSearchConfig elasticSearchConfig)
         //{

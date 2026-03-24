@@ -12,37 +12,37 @@ x-hosts: &self-hosts
             max-file: "3"
 
 services:
-    #   pihcm_redis:
-    #     image: ${DOCKER_REGISTRY}/tools/redis:7
-    #     container_name: pihcm_redis
-    #     restart: always
-    #     ports:
-    #       - ${REDIS_PORT}:6379
-    #     volumes:
-    #       - ${CONFIG_DIR}/redis:/etc/redis
-    #       - redis_data:/data
-    #       - /etc/localtime:/etc/localtime:ro
-    #     command: redis-server /etc/redis/redis.conf --requirepass ${REDIS_PASSWORD}
-    #     healthcheck:
-    #       test: [ "CMD", "redis-cli", "ping" ]
-    #       interval: 10s
-    #       timeout: 10s
-    #       retries: 5
-    #       start_period: 10s
-    #     networks:
-    #       - ihcm
-    #     <<: *self-hosts
+    pihcm_redis:
+        image: ${DOCKER_REGISTRY}/tools/redis:7.2-alpine
+        container_name: pihcm_redis
+        restart: always
+        ports:
+            - ${REDIS_PORT}:6379
+        volumes:
+            - ${DEVELOP_PATH}/config/redis:/etc/redis
+            - ${DEVELOP_PATH}/redis/data:/data
+            - ${DEVELOP_PATH}/redis/localtime:/etc/localtime:ro
+        command: redis-server /etc/redis/redis.conf --requirepass ${REDIS_PASSWORD}
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 10s
+            timeout: 10s
+            retries: 5
+            start_period: 10s
+        networks:
+            - pihcm
+        <<: *self-hosts
 
     pihcm_consul:
-        image: ${DOCKER_REGISTRY}/tools/consul:1.15.4
+        image: ${DOCKER_REGISTRY}/tools/consul:1.21.5
         container_name: pihcm_consul
         restart: always
         volumes:
-            - ${DEVELOP_PATH}/Consul/server.json:/consul/config/server.json
-            - ${DEVELOP_PATH}/Consul/Data:/consul/data
-            - ${DEVELOP_PATH}/Consul/localtime:/etc/localtime:ro
+            - ${DEVELOP_PATH}/config/consul/server.json:/consul/config/server.json
+            - ${DEVELOP_PATH}/consul/data:/consul/data
+            - ${DEVELOP_PATH}/consul/localtime:/etc/localtime:ro
         ports:
-            - "${CONSUL_PORT}:8500"
+            - ${CONSUL_PORT}:8500
         #   - '${CONSUL_NODE_PORT}:8300'
         #   - '${CONSUL_DNS_PORT}:8600'
         command: agent -server -ui -bootstrap-expect=1 -client=0.0.0.0 -data-dir consul/data
@@ -57,6 +57,34 @@ services:
             - pihcm
         <<: *self-hosts
 
+    pihcm_loki:
+        image: ${DOCKER_REGISTRY}/tools/loki:3.5.12
+        container_name: pihcm_loki
+        restart: always
+        ports:
+            - ${LOKI_PORT}:3100
+        volumes:
+            - ${DEVELOP_PATH}/loki/data:/loki
+        command: -config.file=/etc/loki/local-config.yaml
+        networks:
+            - pihcm
+
+    pihcm_grafana:
+        image: ${DOCKER_REGISTRY}/tools/grafana:11.6.13
+        container_name: pihcm_grafana
+        restart: always
+        ports:
+            - ${GRAFANA_PORT}:3000
+        volumes:
+            - ${DEVELOP_PATH}/grafana/provisioning:/etc/grafana/provisioning
+            - ${DEVELOP_PATH}/grafana/data:/var/lib/grafana
+        environment:
+            - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+            # - GF_INSTALL_PLUGINS=grafana-loki-datasource
+        depends_on:
+            - pihcm_loki
+        networks:
+            - pihcm
 networks:
     pihcm:
         external: true

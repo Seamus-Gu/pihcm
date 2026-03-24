@@ -12,15 +12,16 @@ $ErrorActionPreference = "Stop"
 try {
     $currentDir = Get-Location
     $toolsDir = Join-Path -Path $currentDir -ChildPath "tools"
+    $configDir = Join-Path -Path $currentDir -ChildPath "config"
     # Check for and load the .env file
     $envFilePath = Join-Path -Path $currentDir -ChildPath ".env"
     
-    Write-Host "`nCurrent working directory: $currentDir" -ForegroundColor Cyan
+    Write-Host "Current working directory: $currentDir" -ForegroundColor Cyan
     Write-Host "Target tools directory: $toolsDir" -ForegroundColor Cyan
-    # Read the .env file, filter out comments and empty lines, and load environment variables
+    Write-Host "Target config directory: $configDir" -ForegroundColor Cyan
     Write-Host "Env file path: $envFilePath" -ForegroundColor Cyan
 
-    # 2. Check for and load the .env file
+    # Check for and load the .env file
     if (Test-Path -Path $envFilePath -PathType Leaf) {
             # Split the key and value at the first '='
         Write-Host "`nLoading environment variables from .env file..." -ForegroundColor Cyan
@@ -43,6 +44,10 @@ try {
     else {
         Write-Host "`nWarning: .env not found; using system environment variables`n" -ForegroundColor Yellow
     } 
+
+    $TargetFullPath = [Environment]::GetEnvironmentVariable("DEVELOP_PATH", "Process")
+
+    Copy-Item -Path $configDir -Destination $TargetFullPath -Recurse -Force -ErrorAction Stop
 
     Set-Location -Path $toolsDir
     # Catch and display error messages

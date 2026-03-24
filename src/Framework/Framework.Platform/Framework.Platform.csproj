@@ -14,6 +14,7 @@
     <ProjectReference Include="..\Framework.Consul\Framework.Consul.csproj" />
     <ProjectReference Include="..\Framework.Core\Framework.Core.csproj" />
     <ProjectReference Include="..\Framework.DI\Framework.DI.csproj" />
+    <ProjectReference Include="..\Framework.Logger\Framework.Logger.csproj" />
     <ProjectReference Include="..\Framework.WebApi\Framework.WebApi.csproj" />
   </ItemGroup>
   

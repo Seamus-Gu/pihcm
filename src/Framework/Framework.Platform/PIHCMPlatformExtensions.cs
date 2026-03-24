@@ -3,11 +3,13 @@ using Autofac.Extensions.DependencyInjection;
 using Framework.Consul;
 using Framework.Core;
 using Framework.DI;
+using Framework.Logger;
 using Framework.WebApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 namespace Framework.Platform
 {
@@ -31,11 +33,10 @@ namespace Framework.Platform
 
             configuration.AddConsulConfiguration();
 
-            // Consul 客户端
             builder.Services.AddConsulClient();
+            builder.Services.AddLog();
 
-            //// 日志
-            //builder.Services.AddLog();
+            Log.Information("test1");
 
             services.AddHttpContextAccessor();
 
