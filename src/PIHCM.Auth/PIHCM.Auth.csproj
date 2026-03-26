@@ -4,6 +4,18 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>266a4442-7d0e-4f2b-a69c-6531ef7be88f</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Api\PIHCM.Api.Core\PIHCM.Api.Core.csproj" />
+    <ProjectReference Include="..\Framework\Framework.Platform\Framework.Platform.csproj" />
+  </ItemGroup>
 
 </Project>

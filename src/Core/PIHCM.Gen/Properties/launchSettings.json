@@ -1,24 +1,24 @@
 {
-  "profiles": {
-    "https": {
-        "commandName": "Project",
-        "environmentVariables": {
-            "ASPNETCORE_ENVIRONMENT": "Development"
+    "profiles": {
+        "PIHCM.Gen": {
+            "commandName": "Project",
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "dotnetRunMessages": true,
+            "applicationUrl": "https://localhost:5030;http://localhost:19030"
         },
-        "dotnetRunMessages": true,
-        "applicationUrl": "https://localhost:5030;http://localhost:19030"
+        "Container": {
+            "commandName": "Docker",
+            "launchBrowser": false,
+            "environmentVariables": {
+                "ASPNETCORE_URLS": "https://+:443;http://+:80"
+            },
+            "httpPort": 19030,
+            "sslPort": 5030,
+            "useSSL": true,
+            "containerRunArguments": "--network pihcm --name pihcm_gen"
+        }
     },
-    "Container": {
-        "commandName": "Docker",
-        "launchBrowser": false,
-        "environmentVariables": {
-            "ASPNETCORE_URLS": "https://+:443;http://+:80"
-        },
-        "httpPort": 19030,
-        "sslPort": 5030,
-        "useSSL": true,
-        "containerRunArguments": "--network pihcm --name pihcm_gen"
-    }
-  },
-  "$schema": "https://json.schemastore.org/launchsettings.json"
+    "$schema": "https://json.schemastore.org/launchsettings.json"
 }

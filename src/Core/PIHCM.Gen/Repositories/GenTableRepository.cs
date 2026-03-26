@@ -1,12 +1,11 @@
+
 namespace PIHCM.Gen.Repositories
 {
-    public class GenTableRepository
+    public class GenTableRepository : BaseRepository<GenTable>
     {
-        //private readonly string _connectionString;
 
-        public GenTableRepository(string connectionString)
+        public GenTableRepository(ISqlSugarClient context) : base(context)
         {
-            //_connectionString = connectionString;
         }
 
         //    public List<string> GetTables()

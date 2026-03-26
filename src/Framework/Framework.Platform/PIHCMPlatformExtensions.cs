@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Framework.Cache;
 using Framework.Consul;
 using Framework.Core;
 using Framework.DI;
@@ -7,10 +8,13 @@ using Framework.Logger;
 using Framework.Orm;
 using Framework.WebApi;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Framework.Platform
 {
@@ -26,6 +30,14 @@ namespace Framework.Platform
         /// <returns>配置完成的 WebApplicationBuilder 实例，可用于后续的应用程序构建和启动。</returns>
         public static WebApplicationBuilder AddPIHCMPlatform(this WebApplicationBuilder builder, Action<IServiceCollection, IConfiguration>? configureModules = null)
         {
+            return builder.AddPIHCMPlatform(_ => { }, configureModules);
+        }
+
+        public static WebApplicationBuilder AddPIHCMPlatform(this WebApplicationBuilder builder, Action<PIHCMPlatformOptions>? configureOptions, Action<IServiceCollection, IConfiguration>? configureModules = null)
+        {
+            var options = new PIHCMPlatformOptions();
+            configureOptions?.Invoke(options);
+
             var configuration = builder.Configuration;
             var services = builder.Services;
             var host = builder.Host;
@@ -35,24 +47,23 @@ namespace Framework.Platform
             configuration.AddConsulConfiguration();
 
             builder.Services.AddConsulClient();
-            builder.Services.AddLog();
 
-            Log.Information("test1");
+            builder.Services.AddLog();
 
             services.AddHttpContextAccessor();
 
-            //// 缓存注册
-            //builder.Services.AddCache();
+            builder.Services.AddCache();
 
-            // DI
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
             builder.Host.ConfigureContainer<ContainerBuilder>((context, containerBuilder) =>
             {
                 containerBuilder.InitAutofac();
             });
 
-            // Orm
-            builder.Services.AddSqlSugar();
+            if (options.EnableSqlSugar)
+            {
+                builder.Services.AddSqlSugar();
+            }
 
             builder.Services
                 .AddControllers(options =>
@@ -63,23 +74,23 @@ namespace Framework.Platform
                 })
                 .AddJsonOptions(options =>
                 {
-                    //options.JsonSerializerOptions.Converters.Add(new BooleanConverter()); // 布尔处理
-                    //options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());//时间处理
-                    //options.JsonSerializerOptions.Converters.Add(new DateTimeNullableConverter());//时间处理
-                    //options.JsonSerializerOptions.Converters.Add(new LongConverter());//long类型处理
-                    //options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;//忽略循环引用
-                    //options.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;//处理乱码问题
-                    //options.JsonSerializerOptions.IncludeFields = true;//包含成员字段序列化
-                    //options.JsonSerializerOptions.AllowTrailingCommas = true;//允许尾随逗号
-                    //options.JsonSerializerOptions.WriteIndented = true;//是否应使用整齐打印
-                    //options.JsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;//允许注释
-                    //options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;//不区分大小写
-                    //options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;//驼峰
-                    //options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;//驼峰
+                    options.JsonSerializerOptions.Converters.Add(new BooleanConverter()); // 布尔处理
+                    options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());//时间处理
+                    options.JsonSerializerOptions.Converters.Add(new DateTimeNullableConverter());//时间处理
+                    options.JsonSerializerOptions.Converters.Add(new LongConverter());//long类型处理
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;//忽略循环引用
+                    options.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;//处理乱码问题
+                    options.JsonSerializerOptions.IncludeFields = true;//包含成员字段序列化
+                    options.JsonSerializerOptions.AllowTrailingCommas = true;//允许尾随逗号
+                    options.JsonSerializerOptions.WriteIndented = true;//是否应使用整齐打印
+                    options.JsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;//允许注释
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;//不区分大小写
+                    options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;//驼峰
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;//驼峰
                 }); ;
 
-            //// 关闭自动验证
-            //builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
+            // 关闭自动验证
+            builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 
             //// 国际化处理
             //builder.Services.AddLocalization();
@@ -95,8 +106,10 @@ namespace Framework.Platform
             // 服务发现
             builder.Services.AddServiceDiscovery();
 
-            ////
-            //////builder.Services.AddMiniProfiler();
+            configureModules?.Invoke(services, configuration);
+
+            //
+            ////builder.Services.AddMiniProfiler();
 
             //// 雪花Id
             //builder.Services.AddIdGenerater();

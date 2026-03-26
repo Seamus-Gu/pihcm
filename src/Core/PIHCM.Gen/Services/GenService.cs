@@ -184,11 +184,11 @@ namespace PIHCM.Gen.Services
 
                 columns.Add(new GenColumn
                 {
-                    Name = name,
-                    DataType = match.Groups["type"].Value.Trim(),
-                    IsNullable = !Regex.IsMatch(item, @"\bNOT\s+NULL\b", RegexOptions.IgnoreCase),
-                    IsPrimaryKey = isPrimaryKeyInline || primaryKeys.Contains(name),
-                    Description = descriptionMatch.Success ? descriptionMatch.Groups["comment"].Value : null
+                    //Name = name,
+                    //DataType = match.Groups["type"].Value.Trim(),
+                    //IsNullable = !Regex.IsMatch(item, @"\bNOT\s+NULL\b", RegexOptions.IgnoreCase),
+                    //IsPrimaryKey = isPrimaryKeyInline || primaryKeys.Contains(name),
+                    //Description = descriptionMatch.Success ? descriptionMatch.Groups["comment"].Value : null
                 });
             }
 

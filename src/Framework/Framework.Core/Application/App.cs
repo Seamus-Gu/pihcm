@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Framework.Core
@@ -36,39 +38,39 @@ namespace Framework.Core
         /// </summary>
         public static IServiceProvider RootServices => InternalApp._rootServices!;
 
-        ///// <summary>
-        ///// 获取请求上下文
-        ///// </summary>
-        //public static HttpContext HttpContext => RootServices.GetService<IHttpContextAccessor>()?.HttpContext!;
+        /// <summary>
+        /// 获取请求上下文
+        /// </summary>
+        public static HttpContext HttpContext => RootServices.GetService<IHttpContextAccessor>()?.HttpContext!;
 
-        ///// <summary>
-        ///// 解析服务提供器
-        ///// </summary>
-        ///// <param name="serviceType"></param>
-        ///// <returns></returns>
-        //public static IServiceProvider GetServiceProvider(Type serviceType)
-        //{
-        //    // 第一选择，判断是否是单例注册且单例服务不为空，如果是直接返回根服务提供器
-        //    if (RootServices != null && InternalApp._internalServices!
-        //        .Where(u => u.ServiceType == (serviceType.IsGenericType ? serviceType.GetGenericTypeDefinition() : serviceType))
-        //        .Any(u => u.Lifetime == ServiceLifetime.Singleton)) return RootServices;
+        /// <summary>
+        /// 解析服务提供器
+        /// </summary>
+        /// <param name="serviceType"></param>
+        /// <returns></returns>
+        public static IServiceProvider GetServiceProvider(Type serviceType)
+        {
+            // 第一选择，判断是否是单例注册且单例服务不为空，如果是直接返回根服务提供器
+            if (RootServices != null && InternalApp._internalServices!
+                .Where(u => u.ServiceType == (serviceType.IsGenericType ? serviceType.GetGenericTypeDefinition() : serviceType))
+                .Any(u => u.Lifetime == ServiceLifetime.Singleton)) return RootServices;
 
-        //    // 第二选择是获取 HttpContext 对象的 RequestServices
-        //    var httpContext = HttpContext;
-        //    if (httpContext?.RequestServices != null) return httpContext.RequestServices;
-        //    // 第三选择，创建新的作用域并返回服务提供器
-        //    else if (RootServices != null)
-        //    {
-        //        var scoped = RootServices.CreateScope();
-        //        return scoped.ServiceProvider;
-        //    }
-        //    // 第四选择，构建新的服务对象（性能最差）
-        //    else
-        //    {
-        //        var serviceProvider = InternalApp._internalServices.BuildServiceProvider();
-        //        return serviceProvider;
-        //    }
-        //}
+            // 第二选择是获取 HttpContext 对象的 RequestServices
+            var httpContext = HttpContext;
+            if (httpContext?.RequestServices != null) return httpContext.RequestServices;
+            // 第三选择，创建新的作用域并返回服务提供器
+            else if (RootServices != null)
+            {
+                var scoped = RootServices.CreateScope();
+                return scoped.ServiceProvider;
+            }
+            // 第四选择，构建新的服务对象（性能最差）
+            else
+            {
+                var serviceProvider = InternalApp._internalServices.BuildServiceProvider();
+                return serviceProvider;
+            }
+        }
 
         ///// <summary>
         ///// 获取请求生存周期的服务
@@ -95,28 +97,28 @@ namespace Framework.Core
         //    return (serviceProvider ?? GetServiceProvider(type)).GetService(type);
         //}
 
-        ///// <summary>
-        ///// 获取请求生存周期的服务
-        ///// </summary>
-        ///// <typeparam name="TService"></typeparam>
-        ///// <param name="serviceProvider"></param>
-        ///// <returns></returns>
-        //public static TService? GetRequiredService<TService>(IServiceProvider serviceProvider = default!)
-        //    where TService : class
-        //{
-        //    return GetRequiredService(typeof(TService), serviceProvider) as TService;
-        //}
+        /// <summary>
+        /// 获取请求生存周期的服务
+        /// </summary>
+        /// <typeparam name="TService"></typeparam>
+        /// <param name="serviceProvider"></param>
+        /// <returns></returns>
+        public static TService? GetRequiredService<TService>(IServiceProvider serviceProvider = default!)
+            where TService : class
+        {
+            return GetRequiredService(typeof(TService), serviceProvider) as TService;
+        }
 
-        ///// <summary>
-        ///// 获取请求生存周期的服务
-        ///// </summary>
-        ///// <param name="type"></param>
-        ///// <param name="serviceProvider"></param>
-        ///// <returns></returns>
-        //public static object GetRequiredService(Type type, IServiceProvider serviceProvider = default!)
-        //{
-        //    return (serviceProvider ?? GetServiceProvider(type)).GetRequiredService(type);
-        //}
+        /// <summary>
+        /// 获取请求生存周期的服务
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="serviceProvider"></param>
+        /// <returns></returns>
+        public static object GetRequiredService(Type type, IServiceProvider serviceProvider = default!)
+        {
+            return (serviceProvider ?? GetServiceProvider(type)).GetRequiredService(type);
+        }
 
         /// <summary>
         /// 获取配置

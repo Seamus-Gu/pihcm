@@ -1,45 +1,74 @@
-﻿namespace PIHCM.Gen.Entities
+﻿
+namespace PIHCM.Gen.Entities
 {
     public class GenTable
     {
         /// <summary>
+        /// 所属命名空间
+        /// </summary>
+        public virtual string NameSpace { get; set; } = string.Empty;
+
+        /// <summary>
         /// 数据库表名
         /// </summary>
-        public string Name { get; init; } = string.Empty;
+        public virtual string TableName { get; init; } = string.Empty;
 
         /// <summary>
         /// 实体名称
         /// </summary>
-        public string EntityName { get; init; } = string.Empty;
+        public virtual string EntityName { get; init; } = string.Empty;
 
         /// <summary>
         /// 描述
         /// </summary>
-        public string? Description { get; init; }
+        public virtual string? Description { get; init; }
+
+        /// <summary>
+        /// 实体类别
+        /// </summary>
+        public virtual EntityTypeEnum EntityType { get; set; }
+
+        /// <summary>
+        /// 需要分页
+        /// </summary>
+        public virtual bool HasPagination { get; set; }
+
+        /// <summary>
+        /// 需要Combo下拉
+        /// </summary>
+        public virtual bool HasCombo { get; set; }
+
+        /// <summary>
+        /// 需要前端
+        /// </summary>
+        public virtual bool HasFrontend { get; set; }
+
+        /// <summary>
+        /// 表名驼峰命名表示
+        /// </summary>
+        [SugarColumn(IsIgnore = true)]
+        public string CamelName
+        {
+            get
+            {
+                return NamingUtil.SnakeCaseToCamelCase(this.TableName);
+            }
+        }
+
+        [SugarColumn(IsIgnore = true)]
+        public string KebabName
+        {
+            get
+            {
+                return NamingUtil.SnakeCaseToKebabCase(this.TableName);
+            }
+        }
 
         /// <summary>
         /// 获取数据库表中所有列的只读集合。用于描述表结构的各个字段。
         /// </summary>
         /// <remarks>集合中的每个元素都表示一个数据库列，包含列名、类型等元数据信息。该属性在对象初始化后不可更改，适用于只读场景。</remarks>
+        [SugarColumn(IsIgnore = true)]
         public IReadOnlyList<GenColumn> Columns { get; init; } = [];
-
-        /// <summary>
-        /// 表名驼峰命名表示
-        /// </summary>
-        public string CamelName
-        {
-            get
-            {
-                return NamingUtil.SnakeCaseToCamelCase(Name);
-            }
-        }
-
-        public string KebabName
-        {
-            get
-            {
-                return NamingUtil.SnakeCaseToKebabCase(Name);
-            }
-        }
     }
 }

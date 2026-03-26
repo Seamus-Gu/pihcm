@@ -1,23 +1,24 @@
 {
-  "$schema": "https://json.schemastore.org/launchsettings.json",
-  "profiles": {
-    "http": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "applicationUrl": "http://localhost:5079",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+    "profiles": {
+        "PIHCM.Auth": {
+            "commandName": "Project",
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "dotnetRunMessages": true,
+            "applicationUrl": "https://localhost:5010;http://localhost:19010"
+        },
+        "Container": {
+            "commandName": "Docker",
+            "launchBrowser": false,
+            "environmentVariables": {
+                "ASPNETCORE_URLS": "https://+:443;http://+:80"
+            },
+            "httpPort": 19010,
+            "sslPort": 5010,
+            "useSSL": true,
+            "containerRunArguments": "--network pihcm --name pihcm_auth"
+        }
     },
-    "https": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "applicationUrl": "https://localhost:7129;http://localhost:5079",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    }
-  }
+    "$schema": "https://json.schemastore.org/launchsettings.json"
 }

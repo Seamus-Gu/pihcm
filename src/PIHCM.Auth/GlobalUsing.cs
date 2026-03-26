@@ -1,0 +1,9 @@
+﻿global using Framework.Core;
+global using Framework.Grpc;
+global using Framework.Platform;
+global using Framework.WebApi;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.Extensions.Localization;
+global using PIHCM.Api.Core;
+global using PIHCM.Auth.Dto;
+global using PIHCM.Auth.Interfaces;

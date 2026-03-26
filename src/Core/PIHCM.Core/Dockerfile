@@ -12,7 +12,7 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Core/PIHCM.Gen/PIHCM.Gen.csproj", "Core/PIHCM.Gen/"]
+COPY ["Core/PIHCM.Core/PIHCM.Core.csproj", "Core/PIHCM.Core/"]
 COPY ["Framework/Framework.Platform/Framework.Platform.csproj", "Framework/Framework.Platform/"]
 COPY ["Framework/Framework.Cache/Framework.Cache.csproj", "Framework/Framework.Cache/"]
 COPY ["Framework/Framework.Core/Framework.Core.csproj", "Framework/Framework.Core/"]
@@ -23,18 +23,18 @@ COPY ["Framework/Framework.Grpc/Framework.Grpc.csproj", "Framework/Framework.Grp
 COPY ["Framework/Framework.IdGenerater/Framework.IdGenerater.csproj", "Framework/Framework.IdGenerater/"]
 COPY ["Framework/Framework.Logger/Framework.Logger.csproj", "Framework/Framework.Logger/"]
 COPY ["Framework/Framework.Orm/Framework.Orm.csproj", "Framework/Framework.Orm/"]
-RUN dotnet restore "./Core/PIHCM.Gen/PIHCM.Gen.csproj"
+RUN dotnet restore "./Core/PIHCM.Core/PIHCM.Core.csproj"
 COPY . .
-WORKDIR "/src/Core/PIHCM.Gen"
-RUN dotnet build "./PIHCM.Gen.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Core/PIHCM.Core"
+RUN dotnet build "./PIHCM.Core.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # 此阶段用于发布要复制到最终阶段的服务项目
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./PIHCM.Gen.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./PIHCM.Core.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # 此阶段在生产中使用，或在常规模式下从 VS 运行时使用(在不使用调试配置时为默认值)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "PIHCM.Gen.dll"]
+ENTRYPOINT ["dotnet", "PIHCM.Core.dll"]

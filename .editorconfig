@@ -8,10 +8,10 @@ end_of_line = crlf
 tab_width = 4
 indent_size = 4
 
-dotnet_style_qualification_for_field = false:silent
-dotnet_style_qualification_for_property = false:silent
-dotnet_style_qualification_for_method = false:silent
-dotnet_style_qualification_for_event = false:silent
+dotnet_style_qualification_for_field = false:warning
+dotnet_style_qualification_for_property = true:warning
+dotnet_style_qualification_for_method = false:warning
+dotnet_style_qualification_for_event = false:warning
 
 dotnet_diagnostic.IDE0051.severity = suggestion
 dotnet_diagnostic.IDE0052.severity = suggestion
@@ -220,3 +220,4 @@ csharp_style_unused_value_expression_statement_preference = discard_variable:sil
 # Xml files
 [*.xml]
 indent_size = 2
+

@@ -5,7 +5,7 @@
         <File Path="README.md" />
     </Folder>
     <Folder Name="/src/">
-        <Project Path="src/PIHCM.Auth/PIHCM.Auth.csproj" Id="1e03e34f-3ccd-4597-af89-22a9cb9d8643" />
+        <Project Path="src/PIHCM.Auth/PIHCM.Auth.csproj" Id="261eaa2d-fa50-4c16-9ac9-660c94c27b45" />
         <Project Path="src/PIHCM.Gateway/PIHCM.Gateway.csproj" Id="73937fae-0651-4cbe-b21d-8c0027cec7b2" />
     </Folder>
     <Folder Name="/src/API/">
