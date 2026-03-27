@@ -86,16 +86,16 @@ namespace Framework.Core
         //    return service!;
         //}
 
-        ///// <summary>
-        ///// 获取请求生存周期的服务
-        ///// </summary>
-        ///// <param name="type"></param>
-        ///// <param name="serviceProvider"></param>
-        ///// <returns></returns>
-        //public static object? GetService(Type type, IServiceProvider serviceProvider)
-        //{
-        //    return (serviceProvider ?? GetServiceProvider(type)).GetService(type);
-        //}
+        /// <summary>
+        /// 获取请求生存周期的服务
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="serviceProvider"></param>
+        /// <returns></returns>
+        public static object? GetService(Type type, IServiceProvider serviceProvider)
+        {
+            return (serviceProvider ?? GetServiceProvider(type)).GetService(type);
+        }
 
         /// <summary>
         /// 获取请求生存周期的服务

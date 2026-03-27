@@ -1,4 +1,4 @@
-﻿namespace Framework.Core
+﻿namespace Framework.Security
 {
     /// <summary>
     /// 提供与身份认证和授权相关的常量字段，用于标准化令牌、请求头、用户状态等在认证流程中的标识符。
@@ -63,5 +63,30 @@
         /// 首次密码错误
         /// </summary>
         public const string FIRST_PASSWORD_ERROR = "1";
+
+        /// <summary>
+        ///
+        /// </summary>
+        public const string HEADER_TOKEN = "X-Token-Id";
+
+        /// <summary>
+        ///
+        /// </summary>
+        public const string HEADER_USER_ID = "X-User-Id";
+
+        /// <summary>
+        ///
+        /// </summary>
+        public const string HEADER_USER_NAME = "X-User-Name";
+
+        /// <summary>
+        ///
+        /// </summary>
+        public const string HEADER_SYSTEM = "X-System";
+
+        /// <summary>
+        /// 登录用户
+        /// </summary>
+        public const string LOGIN_USER = "LoginUser";
     }
 }

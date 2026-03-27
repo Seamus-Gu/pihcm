@@ -17,7 +17,7 @@
             "httpPort": 19020,
             "sslPort": 5020,
             "useSSL": true,
-            "containerRunArguments": "--network pihcm --name pihcm_gen"
+            "containerRunArguments": "--network pihcm --name pihcm_core"
         }
     },
     "$schema": "https://json.schemastore.org/launchsettings.json"

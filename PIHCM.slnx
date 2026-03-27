@@ -29,6 +29,7 @@
         <Project Path="src/Framework/Framework.Orm/Framework.Orm.csproj" Id="58dd5dad-d687-49aa-bd6e-e4d8db9840fb" />
         <Project Path="src/Framework/Framework.Platform/Framework.Platform.csproj" Id="92bd355b-b3a0-4a22-8ac7-89573e7a7f46" />
         <Project Path="src/Framework/Framework.Quartz/Framework.Quartz.csproj" Id="f9e2b05e-ff47-4e96-a195-716873545212" />
+        <Project Path="src/Framework/Framework.Security/Framework.Security.csproj" Id="82a2183b-8c2d-4792-ad70-4ce28124f25e" />
         <Project Path="src/Framework/Framework.Validation/Framework.Validation.csproj" Id="72b1ab1a-0cac-40dc-8723-b3eee2b41cd8" />
         <Project Path="src/Framework/Framework.WebApi/Framework.WebApi.csproj" Id="8f7bccca-f267-44a5-b394-d0cc1d4c3b9d" />
     </Folder>

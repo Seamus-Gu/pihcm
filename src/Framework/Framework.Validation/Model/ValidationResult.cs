@@ -1,4 +1,4 @@
-﻿namespace Seed.Framework.Validation
+﻿namespace Framework.Validation
 {
     /// <summary>
     /// 校验结果

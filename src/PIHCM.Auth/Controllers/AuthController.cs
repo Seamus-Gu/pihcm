@@ -1,5 +1,7 @@
 ﻿
 
+
+
 namespace PIHCM.Auth.Controllers
 {
     /// <summary>
@@ -8,24 +10,24 @@ namespace PIHCM.Auth.Controllers
     [Route("v1")]
     public class AuthController : BaseController
     {
-        private readonly GrpcService<IRemoteSysUserService> _remoteSysUserService;
-        private readonly IAuthService _authService;
+        //private readonly GrpcService<IRemoteSysUserService> _remoteSysUserService;
+        //private readonly IAuthService _authService;
 
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="remoteSysUserService"></param>
-        /// <param name="authService"></param>
-        public AuthController(GrpcService<IRemoteSysUserService> remoteSysUserService, IAuthService authService)
-        {
-            _remoteSysUserService = remoteSysUserService;
-            _authService = authService;
-        }
+        ///// <summary>
+        ///// 构造函数
+        ///// </summary>
+        ///// <param name="remoteSysUserService"></param>
+        ///// <param name="authService"></param>
+        //public AuthController(GrpcService<IRemoteSysUserService> remoteSysUserService, IAuthService authService)
+        //{
+        //    _remoteSysUserService = remoteSysUserService;
+        //    _authService = authService;
+        //}
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginBody form)
         {
-            //var securityConfig = App.GetConfig<SecurityConfig>(FrameworkConstant.SECURITY);
+            var securityConfig = App.GetConfig<SecurityConfig>(FrameworkConstant.SECURITY);
 
             //form.Password = CryptoUtil.RSADecrypt(form.Password, securityConfig.FrontPrivateKey);
 

@@ -6,6 +6,7 @@ using Framework.Core;
 using Framework.DI;
 using Framework.Logger;
 using Framework.Orm;
+using Framework.Validation;
 using Framework.WebApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
@@ -46,13 +47,13 @@ namespace Framework.Platform
 
             configuration.AddConsulConfiguration();
 
-            builder.Services.AddConsulClient();
+            services.AddConsulClient();
 
-            builder.Services.AddLog();
+            services.AddLog();
 
             services.AddHttpContextAccessor();
 
-            builder.Services.AddCache();
+            services.AddCache();
 
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
             builder.Host.ConfigureContainer<ContainerBuilder>((context, containerBuilder) =>
@@ -62,14 +63,14 @@ namespace Framework.Platform
 
             if (options.EnableSqlSugar)
             {
-                builder.Services.AddSqlSugar();
+                services.AddSqlSugar();
             }
 
-            builder.Services
+            services
                 .AddControllers(options =>
                 {
                     options.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
-                    //options.Filters.Add(new GlobalActionFilter());
+                    options.Filters.Add(new GlobalActionFilter());
                     options.Filters.Add(new GlobalExceptionFilter());
                 })
                 .AddJsonOptions(options =>
@@ -90,10 +91,9 @@ namespace Framework.Platform
                 }); ;
 
             // 关闭自动验证
-            builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
+            services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 
-            //// 国际化处理
-            //builder.Services.AddLocalization();
+            services.AddLocalization();
 
             //if (App.IsDevelop)
             //{
@@ -101,10 +101,10 @@ namespace Framework.Platform
             //}
 
             // 健康监测
-            builder.Services.AddHealthChecks();
+            services.AddHealthChecks();
 
             // 服务发现
-            builder.Services.AddServiceDiscovery();
+            services.AddServiceDiscovery();
 
             configureModules?.Invoke(services, configuration);
 
@@ -131,7 +131,8 @@ namespace Framework.Platform
 
             app.UseHttpsRedirection();
 
-            //app.UseLocalization();
+            app.UseLocalization();
+
             app.UseRouting();
 
             //if (App.IsDevelop)

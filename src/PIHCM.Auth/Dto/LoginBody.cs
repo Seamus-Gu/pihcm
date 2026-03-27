@@ -1,4 +1,5 @@
-﻿namespace PIHCM.Auth.Dto
+﻿
+namespace PIHCM.Auth.Dto
 {
     public class LoginBody
     {
@@ -10,6 +11,7 @@
         /// <summary>
         /// 密码
         /// </summary>
+        [LocalizedRequired]
         public string Password { get; set; } = string.Empty;
     }
 }
