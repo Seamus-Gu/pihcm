@@ -1,5 +1,4 @@
-﻿
-namespace PIHCM.Auth.Dto
+﻿namespace PIHCM.Auth.Dto
 {
     public class LoginBody
     {

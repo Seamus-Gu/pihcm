@@ -1,9 +1,9 @@
 ﻿namespace Framework.Validation
 {
     /// <summary>
-    /// 校验结果
+    /// 统一校验响应模型。
     /// </summary>
-    internal class ValidationResult
+    internal sealed class ValidationResult
     {
         /// <summary>
         /// 状态码
@@ -18,6 +18,6 @@
         /// <summary>
         /// 返回数据
         /// </summary>
-        public List<ValidationError> Data { get; set; } = new();
+        public List<ValidationFailure> Data { get; set; } = new();
     }
 }

@@ -70,7 +70,7 @@ namespace Framework.Platform
                 .AddControllers(options =>
                 {
                     options.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
-                    options.Filters.Add(new GlobalActionFilter());
+                    options.Filters.Add(new ValidationActionFilter());
                     options.Filters.Add(new GlobalExceptionFilter());
                 })
                 .AddJsonOptions(options =>

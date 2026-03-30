@@ -2,8 +2,10 @@
 
 namespace Framework.Validation
 {
-    public class LocalizedRequiredAttribute : RequiredAttribute
+    public class LocalizedRequiredAttribute : RequiredAttribute, IValidationCodeProvider
     {
+        public ValidationErrorEnum Error { get; } = ValidationErrorEnum.Required;
+
         public LocalizedRequiredAttribute()
         {
             this.ErrorMessageResourceType = typeof(ValidationMessages);
