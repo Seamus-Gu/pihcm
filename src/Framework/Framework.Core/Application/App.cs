@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace Framework.Core
 {
@@ -50,16 +51,23 @@ namespace Framework.Core
         /// <returns></returns>
         public static IServiceProvider GetServiceProvider(Type serviceType)
         {
-            // 第一选择，判断是否是单例注册且单例服务不为空，如果是直接返回根服务提供器
-            if (RootServices != null && InternalApp._internalServices!
+            var isSingleton = InternalApp._internalServices!
                 .Where(u => u.ServiceType == (serviceType.IsGenericType ? serviceType.GetGenericTypeDefinition() : serviceType))
-                .Any(u => u.Lifetime == ServiceLifetime.Singleton)) return RootServices;
+                .Any(u => u.Lifetime == ServiceLifetime.Singleton);
+
+            // 第一选择，判断是否是单例注册且单例服务不为空，如果是直接返回根服务提供器
+            if (RootServices != null && isSingleton)
+            {
+                return RootServices;
+            }
 
             // 第二选择是获取 HttpContext 对象的 RequestServices
             var httpContext = HttpContext;
-            if (httpContext?.RequestServices != null) return httpContext.RequestServices;
-            // 第三选择，创建新的作用域并返回服务提供器
-            else if (RootServices != null)
+            if (httpContext?.RequestServices != null)
+            {
+                return httpContext.RequestServices;
+            }
+            else if (RootServices != null) // 第三选择，创建新的作用域并返回服务提供器
             {
                 var scoped = RootServices.CreateScope();
                 return scoped.ServiceProvider;
@@ -72,19 +80,19 @@ namespace Framework.Core
             }
         }
 
-        ///// <summary>
-        ///// 获取请求生存周期的服务
-        ///// </summary>
-        ///// <typeparam name="TService"></typeparam>
-        ///// <param name="serviceProvider"></param>
-        ///// <returns></returns>
-        //public static TService GetService<TService>(IServiceProvider serviceProvider = default!)
-        //    where TService : class
-        //{
-        //    var service = GetService(typeof(TService), serviceProvider) as TService;
+        /// <summary>
+        /// 获取请求生存周期的服务
+        /// </summary>
+        /// <typeparam name="TService"></typeparam>
+        /// <param name="serviceProvider"></param>
+        /// <returns></returns>
+        public static TService GetService<TService>(IServiceProvider serviceProvider = default!)
+            where TService : class
+        {
+            var service = GetService(typeof(TService), serviceProvider) as TService;
 
-        //    return service!;
-        //}
+            return service!;
+        }
 
         /// <summary>
         /// 获取请求生存周期的服务
@@ -140,16 +148,16 @@ namespace Framework.Core
             return options;
         }
 
-        ///// <summary>
-        ///// 获取选项
-        ///// </summary>
-        ///// <typeparam name="TOptions">强类型选项类</typeparam>
-        ///// <param name="serviceProvider"></param>
-        ///// <returns>TOptions</returns>
-        //public static TOptions GetOptions<TOptions>(IServiceProvider serviceProvider = default!)
-        //    where TOptions : class, new()
-        //{
-        //    return GetService<IOptions<TOptions>>(serviceProvider ?? RootServices)?.Value!;
-        //}
+        /// <summary>
+        /// 获取选项
+        /// </summary>
+        /// <typeparam name="TOptions">强类型选项类</typeparam>
+        /// <param name="serviceProvider"></param>
+        /// <returns>TOptions</returns>
+        public static TOptions GetOptions<TOptions>(IServiceProvider serviceProvider = default!)
+            where TOptions : class, new()
+        {
+            return GetService<IOptions<TOptions>>(serviceProvider ?? RootServices)?.Value!;
+        }
     }
 }

@@ -52,19 +52,23 @@ services
 
 var app = builder.Build();
 
+app.ConfigureApp();
 
-//if (app.Environment.IsDevelopment())
-//{
-//    var ocelotConfig = App.GetOptions<FileConfiguration>();
-//    var swaggers = ocelotConfig.Routes
-//        .Select(t => new SwaggerRouteDto
-//        {
-//            ServiceName = t.ServiceName,
-//            UpstreamPathTemplate = t.UpstreamPathTemplate
-//        }).ToList();
+if (app.Environment.IsDevelopment())
+{
+    var ocelotConfig = App.GetOptions<FileConfiguration>();
 
-//    app.UseGatewaySwaggerUI(swaggers);
-//}
+    app.UseSwaggerUI(options =>
+    {
+        foreach (var route in ocelotConfig.Routes)
+        {
+            var index = route.UpstreamPathTemplate.IndexOf(DelimitersConstant.LEFT_BRACE);
+            var prefix = route.UpstreamPathTemplate.Substring(0, index);
+            options.SwaggerEndpoint(prefix + FrameworkConstant.SWAGGER_JSON, route.ServiceName);
+            options.UseRequestInterceptor($"(req) => {{ req.headers['{FrameworkConstant.SWAGGER_HEADER}'] = true; return req; }} ");
+        }
+    });
+}
 
 //// Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())

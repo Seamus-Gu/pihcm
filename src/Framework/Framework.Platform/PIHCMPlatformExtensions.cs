@@ -5,6 +5,7 @@ using Framework.Consul;
 using Framework.Core;
 using Framework.DI;
 using Framework.Logger;
+using Framework.OpenApi;
 using Framework.Orm;
 using Framework.Validation;
 using Framework.WebApi;
@@ -95,10 +96,10 @@ namespace Framework.Platform
 
             services.AddLocalization();
 
-            //if (App.IsDevelop)
-            //{
-            //    builder.Services.AddSwagger();
-            //}
+            if (App.IsDevelop)
+            {
+                builder.Services.AddFrameworkOpenApi();
+            }
 
             // 健康监测
             services.AddHealthChecks();
@@ -127,7 +128,7 @@ namespace Framework.Platform
         /// <param name="app">要配置的应用程序构建器实例。用于注册中间件和终结点。</param>
         public static void UsePIHCMPlatform(this IApplicationBuilder app)
         {
-            //app.ConfigureApp();
+            app.ConfigureApp();
 
             app.UseHttpsRedirection();
 
@@ -148,6 +149,11 @@ namespace Framework.Platform
             {
                 endpoints.MapHealthChecks(FrameworkConstant.HEALTH_ROUTE);
                 endpoints.MapControllers();
+
+                if (App.IsDevelop)
+                {
+                    endpoints.MapOpenApi();
+                }
                 //endpoints.MapMagicOnionService();
             });
         }

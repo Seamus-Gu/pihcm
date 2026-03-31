@@ -71,11 +71,11 @@ namespace Framework.Security
         private static bool TryExtractToken(HttpContext ctx, [NotNullWhen(true)] out string? token)
         {
             var auth = ctx.Request.Headers.Authorization.ToString();
-            if (!string.IsNullOrEmpty(auth) && auth.StartsWith(AuthConstant.TOKEN_PREFIX))
-            {
-                token = auth[AuthConstant.TOKEN_PREFIX.Length..].Trim();
-                return true;
-            }
+            //if (!string.IsNullOrEmpty(auth) && auth.StartsWith(AuthConstant.TOKEN_PREFIX))
+            //{
+            //    token = auth[HttpConta.TOKEN_PREFIX.Length..].Trim();
+            //    return true;
+            //}
 
             token = null;
             return false;
@@ -156,7 +156,9 @@ namespace Framework.Security
         {
             var value = ctx.User.FindFirst(claimType)?.Value;
             if (!string.IsNullOrWhiteSpace(value))
+            {
                 ctx.Request.Headers.TryAdd(headerName, value);
+            }
         }
 
         /// <summary>
