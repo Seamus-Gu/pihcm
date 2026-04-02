@@ -4,6 +4,7 @@ using Framework.Cache;
 using Framework.Consul;
 using Framework.Core;
 using Framework.DI;
+using Framework.IdGenerater;
 using Framework.Logger;
 using Framework.OpenApi;
 using Framework.Orm;
@@ -91,7 +92,6 @@ namespace Framework.Platform
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;//驼峰
                 }); ;
 
-            // 关闭自动验证
             services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 
             services.AddLocalization();
@@ -101,10 +101,8 @@ namespace Framework.Platform
                 builder.Services.AddFrameworkOpenApi();
             }
 
-            // 健康监测
             services.AddHealthChecks();
 
-            // 服务发现
             services.AddServiceDiscovery();
 
             configureModules?.Invoke(services, configuration);
@@ -112,8 +110,7 @@ namespace Framework.Platform
             //
             ////builder.Services.AddMiniProfiler();
 
-            //// 雪花Id
-            //builder.Services.AddIdGenerater();
+            services.AddIdGenerater();
 
             //builder.Services.AddGrpcService();
 

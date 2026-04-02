@@ -17,6 +17,12 @@
         public const string PIPE = "|";
         public const string SLASH = "/";
         public const string BACKSLASH = "\\";
+        public const string BACKTICK = "`";
+        public const string DOUBLE_QUOTE = "\"";
+        public const string LEFT_BRACKET = "[";
+        public const string RIGHT_BRACKET = "]";
+        public const string LEFT_PARENTHESIS = "(";
+        public const string RIGHT_PARENTHESIS = ")";
         public const string LEFT_BRACE = "{";
         public const string RIGHT_BRACE = "}";
     }

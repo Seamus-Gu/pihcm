@@ -1,7 +1,5 @@
 ﻿using Framework.Core;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Framework.WebApi
 {
@@ -51,12 +49,7 @@ namespace Framework.WebApi
                 message
             };
 
-            var options = new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-            };
-
-            return new JsonResult(response, options);
+            return new JsonResult(response);
         }
 
         /// <summary>
@@ -133,7 +126,7 @@ namespace Framework.WebApi
         /// <returns></returns>
         protected IActionResult BoolResult(bool isSuccess)
         {
-            var action = _actionMap.TryGetValue(HttpContext.Request.Method, out var act)
+            var action = _actionMap.TryGetValue(this.HttpContext.Request.Method, out var act)
                  ? act
                  : FrameworkConstant.ADD;
 

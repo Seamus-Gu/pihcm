@@ -20,7 +20,9 @@ namespace PIHCM.Gen.Entities
         /// <summary>
         /// 是否必填
         /// </summary>
-        public virtual bool IsRequired { get; set; }
+        public virtual bool IsNullable { get; set; }
+
+        public virtual bool IsPrimaryKey { get; set; }
 
         /// <summary>
         /// 字段长度
@@ -41,6 +43,8 @@ namespace PIHCM.Gen.Entities
         /// 所属GenTableId
         /// </summary>
         public virtual long TableId { get; set; }
+
+        public virtual string? Description { get; set; }
 
         /// <summary>
         /// 列类型描述

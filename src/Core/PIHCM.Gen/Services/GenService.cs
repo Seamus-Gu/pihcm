@@ -6,62 +6,90 @@ namespace PIHCM.Gen.Services
 {
     public class GenService : IGenService, IScopeService
     {
-        public void ParseCreateTableSql(SQLDto createTableSql)
-        {
-            //if (createTableSql.IsNullOrEmpty())
-            //{
-            //    return;
-            //}
+        private static readonly Regex _tableNameRegex = new(
+            SQLConstant.TABLE_NAME_REGEX,
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-            var tableName = ParseTableName(createTableSql.SqlStr);
+        private static readonly Regex _tableCommentRegex = new(
+            SQLConstant.TABLE_COMMENT_REGEX,
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static readonly Regex _primaryKeyDefinitionRegex = new(
+            SQLConstant.PRIMARY_KEY_DEFINITION_REGEX,
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static readonly Regex _primaryKeyColumnsRegex = new(
+            SQLConstant.PRIMARY_KEY_COLUMNS_REGEX,
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static readonly Regex _columnDefinitionRegex = new(
+            SQLConstant.COLUMN_DEFINITION_REGEX,
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static readonly Regex _columnCommentRegex = new(
+            SQLConstant.COLUMN_COMMENT_REGEX,
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static readonly Regex _inlinePrimaryKeyRegex = new(
+            SQLConstant.INLINE_PRIMARY_KEY_REGEX,
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static readonly Regex _notNullRegex = new(
+            SQLConstant.NOT_NULL_REGEX,
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static readonly Regex _constraintDefinitionRegex = new(
+            SQLConstant.CONSTRAINT_DEFINITION_REGEX,
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        public void ParseCreateTableSql(SQLDto sqlDto)
+        {
+            var sql = sqlDto.SqlStr;
+            var tableName = ParseTableName(sql);
 
             if (string.IsNullOrWhiteSpace(tableName))
             {
-                throw new ArgumentException("无法从 SQL 中解析表名。", nameof(createTableSql));
+                throw new ArgumentException("无法从 SQL 中解析表名。", nameof(sqlDto));
             }
 
-            //var tableDescription = ParseTableComment(createTableSql);
-            //var tableBody = ParseTableBody(createTableSql);
-            //var definitions = SplitDefinitions(tableBody);
+            var tableDescription = ParseTableComment(sql);
+            var tableBody = ParseTableBody(sql);
+            var definitions = SplitDefinitions(tableBody);
 
-            //var primaryKeys = ParsePrimaryKeys(definitions);
-            //var columns = ParseColumns(definitions, primaryKeys);
+            var primaryKeys = ParsePrimaryKeys(definitions);
+            var columns = ParseColumns(definitions, primaryKeys);
 
-            //var table = new GenTable
-            //{
-            //    Name = tableName,
-            //    EntityName = NamingUtil.SnakeCaseToCamelCase(tableName),
-            //    Description = tableDescription,
-            //    Columns = columns
-            //};
+            var table = new GenTable
+            {
+                TableName = tableName,
+                EntityName = NamingUtil.SnakeCaseToCamelCase(tableName),
+                Description = tableDescription,
+                Columns = columns
+            };
         }
 
         private static string ParseTableName(string sql)
         {
-            var match = Regex.Match(
-                sql,
-                """CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?<name>[`"\[]?[A-Za-z0-9_]+[`"\]]?(?:\.[`"\[]?[A-Za-z0-9_]+[`"\]]?)?)""",
-                RegexOptions.IgnoreCase);
-
+            var match = _tableNameRegex.Match(sql);
             if (!match.Success)
             {
                 return string.Empty;
             }
 
-            var rawName = match.Groups["name"].Value;
-            var pureName = rawName.Split('.').Last();
+            var rawName = match.Groups[SQLConstant.NAME].Value;
+            var pureName = rawName.Split(DelimitersConstant.DOT).Last();
             return TrimQuotes(pureName);
         }
 
         private static string? ParseTableComment(string sql)
         {
-            var match = Regex.Match(sql, @"\bCOMMENT\s*=\s*'(?<comment>[^']*)'", RegexOptions.IgnoreCase);
-            return match.Success ? match.Groups["comment"].Value : null;
+            var match = _tableCommentRegex.Match(sql);
+            return match.Success ? match.Groups[SQLConstant.COMMENT].Value : null;
         }
 
         private static string ParseTableBody(string sql)
         {
-            var start = sql.IndexOf('(');
+            var start = sql.IndexOf(DelimitersConstant.LEFT_PARENTHESIS[0]);
             if (start < 0)
             {
                 throw new ArgumentException("建表 SQL 缺少字段定义部分。", nameof(sql));
@@ -70,11 +98,11 @@ namespace PIHCM.Gen.Services
             var depth = 0;
             for (var i = start; i < sql.Length; i++)
             {
-                if (sql[i] == '(')
+                if (sql[i] == DelimitersConstant.LEFT_PARENTHESIS[0])
                 {
                     depth++;
                 }
-                else if (sql[i] == ')')
+                else if (sql[i] == DelimitersConstant.RIGHT_PARENTHESIS[0])
                 {
                     depth--;
                     if (depth == 0)
@@ -95,16 +123,16 @@ namespace PIHCM.Gen.Services
 
             foreach (var ch in body)
             {
-                if (ch == '(')
+                if (ch == DelimitersConstant.LEFT_PARENTHESIS[0])
                 {
                     depth++;
                 }
-                else if (ch == ')')
+                else if (ch == DelimitersConstant.RIGHT_PARENTHESIS[0])
                 {
                     depth--;
                 }
 
-                if (ch == ',' && depth == 0)
+                if (ch == DelimitersConstant.COMMA[0] && depth == 0)
                 {
                     var part = sb.ToString().Trim();
                     if (!string.IsNullOrWhiteSpace(part))
@@ -133,19 +161,19 @@ namespace PIHCM.Gen.Services
 
             foreach (var item in definitions)
             {
-                if (!Regex.IsMatch(item, @"^PRIMARY\s+KEY", RegexOptions.IgnoreCase))
+                if (!_primaryKeyDefinitionRegex.IsMatch(item))
                 {
                     continue;
                 }
 
-                var match = Regex.Match(item, @"\((?<keys>[^\)]*)\)", RegexOptions.IgnoreCase);
+                var match = _primaryKeyColumnsRegex.Match(item);
                 if (!match.Success)
                 {
                     continue;
                 }
 
-                var keys = match.Groups["keys"].Value
-                    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                var keys = match.Groups[SQLConstant.KEYS].Value
+                    .Split(DelimitersConstant.COMMA, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                     .Select(TrimQuotes);
 
                 foreach (var key in keys)
@@ -159,7 +187,7 @@ namespace PIHCM.Gen.Services
 
         private static List<GenColumn> ParseColumns(List<string> definitions, HashSet<string> primaryKeys)
         {
-            var columns = new List<GenColumn>();
+            var columns = new List<GenColumn>(definitions.Count);
 
             foreach (var item in definitions)
             {
@@ -168,44 +196,61 @@ namespace PIHCM.Gen.Services
                     continue;
                 }
 
-                var match = Regex.Match(
-                    item,
-                    """^(?<name>[`"\[]?[A-Za-z0-9_]+[`"\]]?)\s+(?<type>[A-Za-z]+(?:\s+[A-Za-z]+)?(?:\s*\([^\)]*\))?(?:\s+unsigned)?)""",
-                    RegexOptions.IgnoreCase);
-
+                var match = _columnDefinitionRegex.Match(item);
                 if (!match.Success)
                 {
                     continue;
                 }
 
-                var name = TrimQuotes(match.Groups["name"].Value);
-                var descriptionMatch = Regex.Match(item, @"\bCOMMENT\s+'(?<comment>[^']*)'", RegexOptions.IgnoreCase);
-                var isPrimaryKeyInline = Regex.IsMatch(item, @"\bPRIMARY\s+KEY\b", RegexOptions.IgnoreCase);
+                var name = TrimQuotes(match.Groups[SQLConstant.NAME].Value);
+                var descriptionMatch = _columnCommentRegex.Match(item);
+                var isPrimaryKeyInline = _inlinePrimaryKeyRegex.IsMatch(item);
 
                 columns.Add(new GenColumn
                 {
-                    //Name = name,
-                    //DataType = match.Groups["type"].Value.Trim(),
-                    //IsNullable = !Regex.IsMatch(item, @"\bNOT\s+NULL\b", RegexOptions.IgnoreCase),
-                    //IsPrimaryKey = isPrimaryKeyInline || primaryKeys.Contains(name),
-                    //Description = descriptionMatch.Success ? descriptionMatch.Groups["comment"].Value : null
+                    ColumnName = name,
+                    ColumnType = HandleSqlType(match.Groups[SQLConstant.TYPE].Value),
+                    IsNullable = !_notNullRegex.IsMatch(item),
+                    IsPrimaryKey = isPrimaryKeyInline || primaryKeys.Contains(name),
+                    Description = descriptionMatch.Success ? descriptionMatch.Groups[SQLConstant.COMMENT].Value : null
                 });
             }
 
             return columns;
         }
 
+        private static SqlTypeEnum HandleSqlType(string type)
+        {
+            var normalizedType = NormalizeSqlType(type);
+            return SqlTypeEnumHelper.TryParse(normalizedType, out var sqlType)
+                ? sqlType
+                : SqlTypeEnum.Varchar;
+        }
+
+        private static string NormalizeSqlType(string type)
+        {
+            if (string.IsNullOrWhiteSpace(type))
+            {
+                return string.Empty;
+            }
+
+            var span = type.AsSpan().Trim();
+            var separatorIndex = span.IndexOfAny(DelimitersConstant.LEFT_PARENTHESIS[0], DelimitersConstant.SPACE[0]);
+            return (separatorIndex >= 0 ? span[..separatorIndex] : span).ToString();
+        }
+
         private static bool IsConstraintDefinition(string definition)
         {
-            return Regex.IsMatch(
-                definition,
-                @"^(PRIMARY\s+KEY|UNIQUE\s+KEY|UNIQUE\s+INDEX|KEY|INDEX|CONSTRAINT|FOREIGN\s+KEY)",
-                RegexOptions.IgnoreCase);
+            return _constraintDefinitionRegex.IsMatch(definition);
         }
 
         private static string TrimQuotes(string value)
         {
-            return value.Trim().Trim('`', '"', '[', ']');
+            return value.Trim().Trim(
+                DelimitersConstant.BACKTICK[0],
+                DelimitersConstant.DOUBLE_QUOTE[0],
+                DelimitersConstant.LEFT_BRACKET[0],
+                DelimitersConstant.RIGHT_BRACKET[0]);
         }
     }
 }

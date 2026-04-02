@@ -1,4 +1,9 @@
-﻿namespace PIHCM.Gen.Enums
+﻿using System.Collections.Frozen;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+
+namespace PIHCM.Gen.Enums
 {
     public enum SqlTypeEnum
     {
@@ -72,7 +77,6 @@
 
         #region 字符串类型
 
-
         /// <summary>
         /// 定长字符串
         /// </summary>
@@ -98,6 +102,30 @@
         Text = 24,
 
         #endregion
+    }
 
+    public static class SqlTypeEnumHelper
+    {
+        private static readonly FrozenDictionary<string, SqlTypeEnum> _sqlTypeMappings = Enum.GetValues<SqlTypeEnum>()
+            .SelectMany(CreateMappings)
+            .ToFrozenDictionary(static item => item.Key, static item => item.Value, StringComparer.OrdinalIgnoreCase);
+
+        public static bool TryParse(string sqlType, out SqlTypeEnum sqlTypeEnum)
+        {
+            sqlTypeEnum = default;
+            return !string.IsNullOrWhiteSpace(sqlType) && _sqlTypeMappings.TryGetValue(sqlType, out sqlTypeEnum);
+        }
+
+        private static IEnumerable<KeyValuePair<string, SqlTypeEnum>> CreateMappings(SqlTypeEnum sqlType)
+        {
+            var name = sqlType.ToString();
+            yield return new KeyValuePair<string, SqlTypeEnum>(name, sqlType);
+
+            var description = sqlType.GetDescription();
+            if (!string.Equals(name, description, StringComparison.OrdinalIgnoreCase))
+            {
+                yield return new KeyValuePair<string, SqlTypeEnum>(description, sqlType);
+            }
+        }
     }
 }
