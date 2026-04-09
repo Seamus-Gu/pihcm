@@ -1,0 +1,79 @@
+﻿namespace {{namespace}}.Services
+{
+	/// <summary>
+	/// {{column_name}}业务处理层
+	/// </summary>
+	public class {{entity_name}}Service : I{{entity_name}}Service, IScopeService
+	{
+		private readonly {{entity_name}}Repository _{{camel_name}}Repository;
+
+		/// <summary>
+		/// 构造函数
+		/// </summary>
+		public {{entity_name}}Service({{entity_name}}Repository {{camel_name}}Repository)
+		{
+			_{{camel_name}}Repository = {{camel_name}}Repository;
+		}
+		
+		/// <summary>
+		/// 获取{{column_name}}分页列表
+		/// </summary>
+		/// <param name="filter"></param>
+		/// <returns></returns>
+		public async Task<List<{{entity_name}}>> Get{{entity_name}}PageList(Pagination filter)
+		{
+			var result = await _{{camel_name}}Repository.Select{{entity_name}}PageList(filter);
+			
+			return result;
+		}
+		
+		/// <summary>
+		/// 根据Id获取{{column_name}}详细信息
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		public async Task<{{entity_name}}> Get{{entity_name}}ById(long id)
+		{
+			var result = await _{{camel_name}}Repository.GetByIdAsync(id);
+			
+			return result;
+		}
+		
+		/// <summary>
+		/// 新增{{column_name}}
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <returns></returns>
+		public async Task<bool> Add{{entity_name}}({{entity_name}} entity)
+		{
+			var result = await _{{camel_name}}Repository.Insert{{entity_name}}(entity);
+			
+			return result;			
+		}
+		
+		/// <summary>
+		/// 修改{{column_name}}
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <returns></returns>
+		public async Task<bool> Edit{{entity_name}}({{entity_name}} entity)
+		{
+			var result = await _{{camel_name}}Repository.UpdateAsync(entity);
+			
+			return result;
+		}
+		
+		/// <summary>
+		/// 根据Id删除{{column_name}}
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		public async Task<bool> Remove{{entity_name}}ById(long id)
+		{
+			var result = await _{{camel_name}}Repository.DeleteByIdAsync(id);
+			
+			return result;
+		}
+	}
+}
+ 

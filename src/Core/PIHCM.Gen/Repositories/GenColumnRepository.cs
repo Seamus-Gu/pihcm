@@ -6,5 +6,13 @@ namespace PIHCM.Gen.Repositories
         public GenColumnRepository(ISqlSugarClient context) : base(context)
         {
         }
+
+        public Task<List<GenColumn>> SelectListByTableId(long tableId)
+        {
+            var q = AsQueryable()
+                .Where(g => g.TableId == tableId);
+
+            return q.ToListAsync();
+        }
     }
 }

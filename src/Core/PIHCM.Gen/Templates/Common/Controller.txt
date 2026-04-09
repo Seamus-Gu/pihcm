@@ -1,0 +1,88 @@
+﻿namespace {{namespace}}.Controller
+{
+	/// <summary>
+	/// {{name}}接口层
+	/// </summary>
+	[Route("{{kebab_name}}")]
+	public class {{entity_name}}Controller : BaseController
+	{
+		private readonly I{{entity_name}}Service _{{camel_name}}Service;
+		
+		/// <summary>
+		/// 构造函数
+		/// </summary>
+		public {{entity_name}}Controller(I{{entity_name}}Service {{camel_name}}Service)
+		{
+			_{{camel_name}}Service = {{camel_name}}Service;
+		}
+		
+		/// <summary>
+		/// 获取{{name}}分页列表
+		/// </summary>
+		/// <param name="filter"></param>
+		/// <returns></returns>
+		[HttpGet("list")]
+		public async Task<IActionResult> Get{{entity_name}}PageList([FromQuery] Pagination filter)
+		{
+			var result = await _{{camel_name}}Service.Get{{entity_name}}PageList(filter);
+			return Success(new
+			{
+				items = result,
+				total = filter.Total
+			});
+		}
+			
+		/// <summary>
+		/// 获取{{name}}详情信息
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		[HttpGet("{id}")]
+		public async Task<IActionResult> Get{{entity_name}}ById(long id)
+		{
+			var result = await _{{camel_name}}Service.Get{{entity_name}}ById(id);				
+
+			return Success(result);
+		}
+			
+		/// <summary>
+		/// 新增{{name}}
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <returns></returns>
+		[HttpPost("add")]
+		public async Task<IActionResult> Add{{entity_name}}([FromBody] {{entity_name}} entity)
+		{
+			var result = await _{{camel_name}}Service.Add{{entity_name}}(entity);
+				
+			return BoolResult(result);
+		}
+			
+		/// <summary>
+		/// 修改{{name}}
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <returns></returns>
+		[HttpPut("edit")]
+		public async Task<IActionResult> Edit{{entity_name}}([FromBody] {{entity_name}} entity)
+		{
+			var result = await _{{camel_name}}Service.Edit{{entity_name}}(entity);
+			
+			return BoolResult(result);
+		}
+			
+		/// <summary
+		/// 删除{{name}}
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		[HttpDelete("remove/{id}")]
+		public async Task<IActionResult> Remove{{entity_name}}ById(long id)
+		{
+			var result = await _{{camel_name}}Service.Remove{{entity_name}}ById(id);
+			
+			return BoolResult(result);
+		}
+	}
+}
+  

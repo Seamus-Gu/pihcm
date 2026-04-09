@@ -1,0 +1,14 @@
+﻿namespace {{namespace}}.Entities
+{
+    /// <summary>
+    /// {{name}}实体类
+    /// </summary>
+    public class {{entity_name}} : BaseEntity
+    {   {% for column in columns %}
+        /// <summary>
+        /// {{column.column_desc}}
+        /// </summary>
+        public virtual {{ column.column_type_str }}{% if column.is_nullable == true %}?{% endif %} {{ column.entity_name }} { get; set; } {% if column.column_type_str == "string" %}= string.Empty; {% endif %}
+{% endfor %}
+     }
+}

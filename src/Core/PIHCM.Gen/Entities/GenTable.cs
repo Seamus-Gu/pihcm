@@ -6,22 +6,27 @@ namespace PIHCM.Gen.Entities
         /// <summary>
         /// 所属命名空间
         /// </summary>
-        public virtual string NameSpace { get; set; } = string.Empty;
+        public virtual string Namespace { get; set; } = string.Empty;
 
         /// <summary>
         /// 数据库表名
         /// </summary>
-        public virtual string TableName { get; init; } = string.Empty;
+        public virtual string TableName { get; set; } = string.Empty;
 
         /// <summary>
         /// 实体名称
         /// </summary>
-        public virtual string EntityName { get; init; } = string.Empty;
+        public virtual string EntityName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 实体名称
+        /// </summary>
+        public virtual string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// 描述
         /// </summary>
-        public virtual string? Description { get; init; }
+        public virtual string? Description { get; set; }
 
         /// <summary>
         /// 实体类别
@@ -69,6 +74,6 @@ namespace PIHCM.Gen.Entities
         /// </summary>
         /// <remarks>集合中的每个元素都表示一个数据库列，包含列名、类型等元数据信息。该属性在对象初始化后不可更改，适用于只读场景。</remarks>
         [SugarColumn(IsIgnore = true)]
-        public IReadOnlyList<GenColumn> Columns { get; init; } = [];
+        public List<GenColumn> Columns { get; set; } = [];
     }
 }

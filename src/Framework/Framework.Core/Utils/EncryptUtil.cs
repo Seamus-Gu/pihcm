@@ -5,7 +5,7 @@ namespace Framework.Core.Utils
 {
 
     //Todo 加密解密（MD5、SHA256、AES、RSA）
-    internal class EncryptUtils
+    internal class EncryptUtil
     {
         public static string MD5(string input)
         {

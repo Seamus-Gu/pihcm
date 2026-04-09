@@ -27,5 +27,21 @@
                 total = query.Total
             });
         }
+
+        [HttpGet("generate-code")]
+        public async Task<IActionResult> GenerateCode([FromQuery] long tableId)
+        {
+            var result = await _genTableService.GenerateCode(tableId);
+
+            return Success(result);
+        }
+
+        [HttpPost("export-code")]
+        public async Task<IActionResult> ExportCode([FromBody] DownloadDto dto)
+        {
+            var result = await _genTableService.ExportCode(dto.TableId);
+
+            return Success(File(result, "application/zip", "test.zip"));
+        }
     }
 }

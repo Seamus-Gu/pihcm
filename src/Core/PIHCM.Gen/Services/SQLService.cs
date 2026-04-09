@@ -68,7 +68,7 @@
 
             var table = new GenTable
             {
-                NameSpace = App.AppName,
+                Namespace = App.AppName,
                 TableName = tableName,
                 EntityName = NamingUtil.SnakeCaseToCamelCase(tableName),
                 Description = tableDescription,
@@ -238,26 +238,26 @@
                 var descriptionMatch = _columnCommentRegex.Match(item);
                 var isPrimaryKeyInline = _inlinePrimaryKeyRegex.IsMatch(item);
 
+                if (name == SQLConstant.CREATED_AT || name == SQLConstant.CREATED_BY || name == SQLConstant.UPDATED_AT || name == SQLConstant.UPDATED_BY)
+                {
+                    continue;
+                }
+
                 columns.Add(new GenColumn
                 {
                     ColumnName = name,
                     ColumnType = HandleSqlType(match.Groups[SQLConstant.TYPE].Value),
                     IsNullable = !_notNullRegex.IsMatch(item),
                     IsPrimaryKey = isPrimaryKeyInline || primaryKeys.Contains(name),
-                    Description = descriptionMatch.Success ? descriptionMatch.Groups[SQLConstant.COMMENT].Value : null
+                    ColumnDesc = descriptionMatch.Success ? descriptionMatch.Groups[SQLConstant.COMMENT].Value : null
                 });
             }
 
             return columns;
         }
 
-        private static SqlTypeEnum HandleSqlType(string type)
+        private static string HandleSqlType(string type)
         {
-            if (string.IsNullOrWhiteSpace(type))
-            {
-                return SqlTypeEnum.Varchar;
-            }
-
             var normalized = type.Trim().ToLowerInvariant();
 
             var leftParenIndex = normalized.IndexOf(DelimitersConstant.LEFT_PARENTHESIS);
@@ -272,8 +272,9 @@
                 normalized = normalized[..spaceIndex];
             }
 
-            var enumDic = typeof(SqlTypeEnum).GetDescriptionAndEnum<SqlTypeEnum>();
-            return enumDic.TryGetValue(normalized, out var sqlType) ? sqlType : SqlTypeEnum.Varchar;
+            return normalized;
+            //var enumDic = typeof(SqlTypeEnum).GetDescriptionAndEnum<SqlTypeEnum>();
+            //return enumDic.TryGetValue(normalized, out var sqlType) ? sqlType : SqlTypeEnum.Varchar;
         }
 
         private static bool IsConstraintDefinition(string definition)

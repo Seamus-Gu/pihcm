@@ -1,57 +1,110 @@
+using Dm.util;
+using Framework.Core.Utils;
+using Scriban;
+
 namespace PIHCM.Gen.Services
 {
     public class GenTableService : IGenTableService, IScopeService
     {
-        private readonly GenTableRepository _repository;
+        private readonly GenTableRepository _genTableRepository;
+        private readonly GenColumnRepository _genColumnRepository;
 
-        public GenTableService(GenTableRepository repository)
+        public GenTableService(GenTableRepository repository, GenColumnRepository genColumnRepository)
         {
-            _repository = repository;
+            _genTableRepository = repository;
+            _genColumnRepository = genColumnRepository;
         }
 
         public async Task<List<GenTable>> GetPageList(GenTableQueryDto query)
         {
-            return await _repository.SelectPageList(query);
+            return await _genTableRepository.SelectPageList(query);
         }
 
-        public void GenerateCode(string tableName, string outputPath)
+        public async Task<List<GenTemplateDto>> GenerateCode(long tableId)
         {
-            //            var columns = _repository.GetColumns(tableName);
+            var genTable = await _genTableRepository.GetByIdAsync(tableId);
 
-            //            // Define a simple template
-            //            var template = @"using System;
+            genTable.Columns = await _genColumnRepository.SelectListByTableId(tableId);
 
-            //namespace GeneratedCode
-            //{
-            //    public class {TableName}
-            //    {
-            //{Properties}
-            //    }
-            //}";
+            var templateList = GetTemplateList(tableId);
 
-            //            // Generate properties based on columns
-            //            var propertiesBuilder = new StringBuilder();
-            //            foreach (var column in columns)
-            //            {
-            //                propertiesBuilder.AppendLine($"        public {MapDataType(column.DataType)} {column.ColumnName} {{ get; set; }}");
-            //            }
-
-            //            // Replace placeholders in the template
-            //            var code = template.Replace("{TableName}", tableName)
-            //                               .Replace("{Properties}", propertiesBuilder.ToString());
-
-            //            // Write the generated code to a file
-            //            File.WriteAllText(Path.Combine(outputPath, $"{tableName}.cs"), code);
-        }
-
-        private string MapDataType(string sqlDataType)
-        {
-            return sqlDataType switch
+            foreach (var item in templateList)
             {
-                "int" => "int",
-                "varchar" => "string",
-                "datetime" => "DateTime",
-                _ => "object"
+                var template = Template.ParseLiquid(item.Content);
+
+                var result = template.Render(genTable);
+
+                var fileName = string.Format(item.FileName, genTable.TableName);
+
+                var path = Path.Combine(item.GenFolder, fileName);
+
+                // 确保目标文件夹存在
+                if (!Directory.Exists(item.GenFolder))
+                {
+                    Directory.CreateDirectory(item.GenFolder);
+                }
+
+                File.WriteAllText(path, result);
+
+                item.Code = result;
+            }
+
+            return templateList;
+        }
+
+        public async Task<MemoryStream> ExportCode(long tableId)
+        {
+            string genFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Generate", tableId.toString());
+
+            var ms = FileUtil.ZipStream(genFolder);
+
+            return ms;
+        }
+
+        private List<GenTemplateDto> GetTemplateList(long tableId)
+        {
+            var result = new List<GenTemplateDto>();
+
+            string folder = Path.Combine(AppContext.BaseDirectory, "Templates", "Common");
+            string genFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Generate", tableId.toString());
+
+            return new List<GenTemplateDto>
+            {
+                new GenTemplateDto
+                {
+                    Name = "Entity",
+                    Content = File.ReadAllText($"{folder}/Entity.txt"),
+                    GenFolder =  Path.Combine(genFolder,"Entities"),
+                    FileName = "{0}.cs"
+                },
+                new GenTemplateDto
+                {
+                    Name = "Repository",
+                    Content = File.ReadAllText($"{folder}/Repository.txt"),
+                    GenFolder =  Path.Combine(genFolder,"Repositories"),
+                    FileName = "{0}Repository.cs"
+                },
+                new GenTemplateDto
+                {
+                    Name = "Service",
+                    Content = File.ReadAllText($"{folder}/Service.txt"),
+                    GenFolder =  Path.Combine(genFolder,"Services"),
+                    FileName = "{0}Services.cs"
+                },
+                new GenTemplateDto
+                {
+                    Name = "Interface",
+                    Content = File.ReadAllText($"{folder}/Interface.txt"),
+                    GenFolder =  Path.Combine(genFolder,"Entities"),
+                    FileName = "I{0}Service.cs"
+                },
+                new GenTemplateDto
+                {
+                    Name = "Controller",
+                    Content = File.ReadAllText($"{folder}/Controller.txt"),
+                    GenFolder =  Path.Combine(genFolder,"Controllers"),
+                    FileName = "{0}Controller.cs"
+                }
             };
         }
     }

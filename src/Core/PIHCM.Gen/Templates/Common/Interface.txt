@@ -1,0 +1,44 @@
+﻿namespace {{namespace}}.Interfaces
+{
+	/// <summary>
+	/// {{name}}业务层接口
+	/// </summary>
+	public interface I{{entity_name}}Service
+	{
+		/// <summary>
+		/// 获取{{name}}分页列表
+		/// </summary>
+		/// <param name="filter"></param>
+		/// <returns></returns>
+		public Task<List<{{entity_name}}>> Get{{entity_name}}PageList(Pagination filter);
+
+		/// <summary>
+		/// 根据Id获取{{name}}
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		public Task<{{entity_name}}> Get{{entity_name}}ById(long id);
+		
+		/// <summary>
+		/// 新增{{name}}
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <returns></returns>
+		public Task<bool> Add{{entity_name}}({{entity_name}} entity);
+
+		/// <summary>
+		/// 修改{{name}}
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <returns></returns>
+		public Task<bool> Edit{{entity_name}}({{entity_name}} entity);
+		
+		/// <summary>
+		/// 删除{{name}}
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		public Task<bool> Remove{{entity_name}}ById(long id);
+	}
+}
+  

@@ -18,9 +18,12 @@ namespace Framework.Core
         /// <returns>转换后的大驼峰命名法字符串。如果输入为空或仅包含空白字符，则返回空字符串。</returns>
         public static string SnakeCaseToCamelCase(string snakeCase)
         {
-            if (string.IsNullOrWhiteSpace(snakeCase)) return string.Empty;
+            if (string.IsNullOrWhiteSpace(snakeCase))
+            {
+                return string.Empty;
+            }
 
-            var words = snakeCase.Split('_');
+            var words = snakeCase.Split(DelimitersConstant.UNDERSCORE);
             for (int i = 0; i < words.Length; i++)
             {
                 words[i] = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(words[i].ToLower());
@@ -36,9 +39,12 @@ namespace Framework.Core
         /// <returns>转换后的短横线命名字符串。如果输入为空或仅包含空白字符，则返回空字符串。</returns>
         public static string SnakeCaseToKebabCase(string snakeCase)
         {
-            if (string.IsNullOrWhiteSpace(snakeCase)) return string.Empty;
+            if (string.IsNullOrWhiteSpace(snakeCase))
+            {
+                return string.Empty;
+            }
 
-            return snakeCase.ToLower().Replace('_', '-');
+            return snakeCase.ToLower().Replace(DelimitersConstant.UNDERSCORE.First(), DelimitersConstant.DASH.First());
         }
 
         /// <summary>
@@ -49,14 +55,17 @@ namespace Framework.Core
         /// <returns>转换后的蛇形命名格式字符串。如果输入为空或仅包含空白字符，则返回空字符串。</returns>
         public static string CamelCaseToSnakeCase(string camelCase)
         {
-            if (string.IsNullOrWhiteSpace(camelCase)) return string.Empty;
+            if (string.IsNullOrWhiteSpace(camelCase))
+            {
+                return string.Empty;
+            }
 
             var stringBuilder = new StringBuilder();
             for (int i = 0; i < camelCase.Length; i++)
             {
                 if (char.IsUpper(camelCase[i]) && i > 0)
                 {
-                    stringBuilder.Append('_');
+                    stringBuilder.Append(DelimitersConstant.UNDERSCORE);
                 }
                 stringBuilder.Append(char.ToLower(camelCase[i]));
             }
@@ -72,7 +81,10 @@ namespace Framework.Core
         /// <returns>转换后的短横线分隔小写字符串。如果输入为空或仅包含空白字符，则返回空字符串。</returns>
         public static string CamelCaseToKebabCase(string camelCase)
         {
-            if (string.IsNullOrWhiteSpace(camelCase)) return string.Empty;
+            if (string.IsNullOrWhiteSpace(camelCase))
+            {
+                return string.Empty;
+            }
 
             var stringBuilder = new StringBuilder();
             for (int i = 0; i < camelCase.Length; i++)
@@ -82,6 +94,39 @@ namespace Framework.Core
                     stringBuilder.Append('-');
                 }
                 stringBuilder.Append(char.ToLower(camelCase[i]));
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        /// <summary>
+        /// 将下划线命名法（snake_case）字符串转换为帕斯卡命名法（PascalCase）字符串。
+        /// </summary>
+        /// <remarks>与大驼峰命名法类似，但通常用于表示公共或公开的类型、方法等。</remarks>
+        /// <param name="snakeCase">要转换的下划线命名法字符串。不能为空或仅包含空白字符。</param>
+        /// <returns>转换后的帕斯卡命名法字符串。如果输入为空或仅包含空白字符，则返回空字符串。</returns>
+        public static string SnakeCaseToPascal(string snakeCase)
+        {
+            if (string.IsNullOrWhiteSpace(snakeCase))
+            {
+                return string.Empty;
+            }
+
+            var words = snakeCase.Split(DelimitersConstant.UNDERSCORE, StringSplitOptions.RemoveEmptyEntries);
+            var stringBuilder = new StringBuilder();
+
+            foreach (var word in words)
+            {
+                if (word.Length == 0)
+                {
+                    continue;
+                }
+
+                var lowerWord = word.ToLower(CultureInfo.CurrentCulture);
+                var pascalWord = char.ToUpper(lowerWord[0], CultureInfo.CurrentCulture)
+                    + (lowerWord.Length > 1 ? lowerWord[1..] : string.Empty);
+
+                stringBuilder.Append(pascalWord);
             }
 
             return stringBuilder.ToString();

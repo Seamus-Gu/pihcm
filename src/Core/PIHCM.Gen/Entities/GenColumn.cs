@@ -1,3 +1,5 @@
+using PIHCM.Gen.Constants;
+
 namespace PIHCM.Gen.Entities
 {
     public class GenColumn : BaseEntity
@@ -10,7 +12,7 @@ namespace PIHCM.Gen.Entities
         /// <summary>
         /// 列类型
         /// </summary>
-        public virtual SqlTypeEnum ColumnType { get; set; }
+        public virtual string ColumnType { get; set; } = string.Empty;
 
         /// <summary>
         /// 列描述(注释)
@@ -22,6 +24,9 @@ namespace PIHCM.Gen.Entities
         /// </summary>
         public virtual bool IsNullable { get; set; }
 
+        /// <summary>
+        /// 是否为主键
+        /// </summary>
         public virtual bool IsPrimaryKey { get; set; }
 
         /// <summary>
@@ -44,8 +49,6 @@ namespace PIHCM.Gen.Entities
         /// </summary>
         public virtual long TableId { get; set; }
 
-        public virtual string? Description { get; set; }
-
         /// <summary>
         /// 列类型描述
         /// </summary>
@@ -54,43 +57,33 @@ namespace PIHCM.Gen.Entities
         {
             get
             {
-                return this.ColumnType.GetDescription();
+                var map = GenConstant.TYPE_MAP;
+                return map.GetValueOrDefault(this.ColumnType) ?? string.Empty;
             }
         }
 
-        ///// <summary>
-        ///// 列名驼峰命名
-        ///// </summary>
-        //[SugarColumn(IsIgnore = true)]
-        //public virtual string CamelName
-        //{
-        //    get
-        //    {
-        //        return NamingUtil.PascalToCamel(this.ColumnName);
-        //    }
-        //}
+        /// <summary>
+        /// 实体命名
+        /// </summary>
+        [SugarColumn(IsIgnore = true)]
+        public virtual string EntityName
+        {
+            get
+            {
+                return NamingUtil.SnakeCaseToPascal(this.ColumnName);
+            }
+        }
 
-        ///// <summary>
-        ///// 列名驼峰命名
-        ///// </summary>
-        //[SugarColumn(IsIgnore = true)]
-        //public virtual string SqlType
-        //{
-        //    get
-        //    {
-        //        var desc = this.ColumnType.GetDescription();
-        //        switch (this.ColumnType)
-        //        {
-        //            case SqlTypeEnum.Float:
-        //            case SqlTypeEnum.Double:
-        //            case SqlTypeEnum.Decimal:
-        //                return $"{desc}({this.TypeLength},{this.Point})";
-        //            case SqlTypeEnum.Char:
-        //                return $"{desc}({this.TypeLength})";
-        //            default:
-        //                return desc;
-        //        }
-        //    }
-        //}
+        /// <summary>
+        /// 列名驼峰命名
+        /// </summary>
+        [SugarColumn(IsIgnore = true)]
+        public virtual string CamelName
+        {
+            get
+            {
+                return NamingUtil.SnakeCaseToCamelCase(this.ColumnName);
+            }
+        }
     }
 }

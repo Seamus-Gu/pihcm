@@ -2,14 +2,36 @@
 {
     public class SQLConstant
     {
+        #region 类型
+        public const string INT = "int";
+        public const string INTEGER = "integer";
+        public const string BIGINT = "bigint";
+        public const string FLOAT = "float";
+        public const string DOUBLE = "double";
+        public const string DECIMAL = "decimal";
+        public const string TINYINT = "tinyint";
+
+        public const string DATE = "date";
+        public const string TIME = "time";
+        public const string YEAR = "year";
+        public const string DATETIME = "datetime";
+        public const string TIMESTAMP = "timestamp";
+
+        public const string CHAR = "char";
+        public const string VARCHAR = "varchar";
+        public const string BLOB = "blob";
+        public const string TEXT = "text";
+        #endregion
+
+        public const string CREATED_AT = "created_at";
+        public const string CREATED_BY = "created_by";
+        public const string UPDATED_AT = "updated_at";
+        public const string UPDATED_BY = "updated_by";
+
         public const string NAME = "name";
         public const string COMMENT = "comment";
         public const string TYPE = "type";
         public const string KEYS = "keys";
-
-        public const string INTEGER = "integer";
-        public const string NUMERIC = "numeric";
-        public const string NVARCHAR = "nvarchar";
 
         public const string TABLE_NAME_REGEX = """CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?<name>[`\"\[]?[A-Za-z0-9_]+[`\"\]]?(?:\.[`\"\[]?[A-Za-z0-9_]+[`\"\]]?)?)""";
         public const string TABLE_COMMENT_REGEX = @"\bCOMMENT\s*=\s*'(?<comment>[^']*)'";

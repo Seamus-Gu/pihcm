@@ -1,0 +1,25 @@
+﻿namespace {{namespace}}.Repositories
+{
+	/// <summary>
+	/// {{name}}仓储层
+	/// </summary>
+	public class {{entity_name}}Repository : BaseRepository<{{entity_name}}>
+	{
+		/// <summary>
+		/// 构造函数
+		/// </summary>
+		public {{entity_name}}Repository(ISqlSugarClient context) : base(context)
+		{
+		}
+		
+		/// <summary>
+		/// 获取{{name}}分页列表
+		/// </summary>
+		public Task<List<{{entity_name}}>> Select{{entity_name}}PageList(Pagination filter)
+		{
+			var q = AsQueryable();
+
+			return PaginationListAsync(q, filter);
+		}
+	}
+}
