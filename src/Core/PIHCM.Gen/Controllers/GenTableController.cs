@@ -41,7 +41,7 @@
         {
             var result = await _genTableService.ExportCode(dto.TableId);
 
-            return Success(File(result, "application/zip", "test.zip"));
+            return File(result, "application/octet-stream", "test.zip");
         }
     }
 }

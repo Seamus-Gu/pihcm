@@ -34,7 +34,7 @@ namespace PIHCM.Gen.Services
 
                 var result = template.Render(genTable);
 
-                var fileName = string.Format(item.FileName, genTable.TableName);
+                var fileName = string.Format(item.FileName, genTable.EntityName);
 
                 var path = Path.Combine(item.GenFolder, fileName);
 
@@ -74,35 +74,35 @@ namespace PIHCM.Gen.Services
                 {
                     Name = "Entity",
                     Content = File.ReadAllText($"{folder}/Entity.txt"),
-                    GenFolder =  Path.Combine(genFolder,"Entities"),
+                    GenFolder =  Path.Combine(genFolder,"Backend","Entities"),
                     FileName = "{0}.cs"
                 },
                 new GenTemplateDto
                 {
                     Name = "Repository",
                     Content = File.ReadAllText($"{folder}/Repository.txt"),
-                    GenFolder =  Path.Combine(genFolder,"Repositories"),
+                    GenFolder =  Path.Combine(genFolder,"Backend","Repositories"),
                     FileName = "{0}Repository.cs"
                 },
                 new GenTemplateDto
                 {
                     Name = "Service",
                     Content = File.ReadAllText($"{folder}/Service.txt"),
-                    GenFolder =  Path.Combine(genFolder,"Services"),
+                    GenFolder =  Path.Combine(genFolder,"Backend","Services"),
                     FileName = "{0}Services.cs"
                 },
                 new GenTemplateDto
                 {
                     Name = "Interface",
                     Content = File.ReadAllText($"{folder}/Interface.txt"),
-                    GenFolder =  Path.Combine(genFolder,"Entities"),
+                    GenFolder =  Path.Combine(genFolder,"Backend","Interface"),
                     FileName = "I{0}Service.cs"
                 },
                 new GenTemplateDto
                 {
                     Name = "Controller",
                     Content = File.ReadAllText($"{folder}/Controller.txt"),
-                    GenFolder =  Path.Combine(genFolder,"Controllers"),
+                    GenFolder =  Path.Combine(genFolder,"Backend","Controllers"),
                     FileName = "{0}Controller.cs"
                 }
             };
