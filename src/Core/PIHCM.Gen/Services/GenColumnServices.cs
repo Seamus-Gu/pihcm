@@ -20,9 +20,9 @@ namespace PIHCM.Gen.Services
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<List<GenColumn>> GetGenColumnPageList(Pagination filter)
+        public async Task<List<GenColumn>> GetGenColumnPageList(GenColumnQueryDto query)
         {
-            var result = await _genColumnRepository.SelectGenColumnPageList(filter);
+            var result = await _genColumnRepository.SelectGenColumnPageList(query);
 
             return result;
         }

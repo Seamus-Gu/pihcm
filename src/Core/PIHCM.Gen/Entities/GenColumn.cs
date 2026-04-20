@@ -7,52 +7,52 @@ namespace PIHCM.Gen.Entities
         /// <summary>
         /// 列名
         /// </summary>
-        public virtual string ColumnName { get; set; } = string.Empty;
+        public string ColumnName { get; set; } = string.Empty;
 
         /// <summary>
         /// 列类型
         /// </summary>
-        public virtual string ColumnType { get; set; } = string.Empty;
+        public string ColumnType { get; set; } = string.Empty;
 
         /// <summary>
         /// 列描述(注释)
         /// </summary>
-        public virtual string? ColumnDesc { get; set; }
+        public string? ColumnDesc { get; set; }
 
         /// <summary>
         /// 是否必填
         /// </summary>
-        public virtual bool IsNullable { get; set; }
+        public bool IsNullable { get; set; }
 
         /// <summary>
         /// 字段长度
         /// </summary>
-        public virtual int? TypeLength { get; set; }
+        public int? TypeLength { get; set; }
 
         /// <summary>
         /// 小数点
         /// </summary>
-        public virtual int? Point { get; set; }
+        public int? Point { get; set; }
 
         /// <summary>
         /// Gets or sets the key used to identify the translation resource associated with this instance.
         /// </summary>
-        public virtual string TranslationKey { get; set; } = string.Empty;
+        public string TranslationKey { get; set; } = string.Empty;
 
         /// <summary>
         /// 是否在页面隐藏
         /// </summary>
-        public virtual bool IsHidden { get; set; }
+        public bool IsHidden { get; set; }
 
         /// <summary>
         /// 组件类型
         /// </summary>
-        public virtual CommontTypeEnum? ComponentType { get; set; }
+        public CommontTypeEnum? ComponentType { get; set; }
 
         /// <summary>
         /// 所属GenTableId
         /// </summary>
-        public virtual long TableId { get; set; }
+        public long TableId { get; set; }
 
         /// <summary>
         /// 列类型描述

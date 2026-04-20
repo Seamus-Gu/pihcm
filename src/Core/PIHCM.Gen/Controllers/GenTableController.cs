@@ -80,7 +80,7 @@
         {
             var result = await _genTableService.ExportCode(dto.TableId);
 
-            return File(result, "application/octet-stream", "test.zip");
+            return File(result, "application/octet-stream", "code.zip");
         }
     }
 }

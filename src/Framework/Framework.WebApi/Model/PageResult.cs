@@ -10,6 +10,6 @@
         /// <summary>
         /// Gets or sets the total number of items represented by the current instance.
         /// </summary>
-        public long Total { get; set; }
+        public int Total { get; set; }
     }
 }

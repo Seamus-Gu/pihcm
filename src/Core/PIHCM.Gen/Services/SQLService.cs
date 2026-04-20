@@ -62,7 +62,7 @@
                 Namespace = App.AppName,
                 Name = name,
                 TableName = tableName,
-                EntityName = NamingUtil.SnakeCaseToCamelCase(tableName),
+                EntityName = NamingUtil.SnakeCaseToPascal(tableName),
             };
 
             columns.ForEach(t => t.TableId = table.Id);

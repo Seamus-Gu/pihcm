@@ -22,13 +22,14 @@ namespace PIHCM.Gen.Controller
         /// <param name="filter"></param>
         /// <returns></returns>
         [HttpGet("list")]
-        public async Task<IActionResult> GetGenColumnPageList([FromQuery] Pagination filter)
+        public async Task<IActionResult> GetGenColumnPageList([FromQuery] GenColumnQueryDto query)
         {
-            var result = await _genColumnService.GetGenColumnPageList(filter);
+            var result = await _genColumnService.GetGenColumnPageList(query);
+
             return Success(new
             {
                 items = result,
-                total = filter.Total
+                total = query.Total
             });
         }
 

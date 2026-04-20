@@ -2,6 +2,6 @@
 {
     public class DownloadDto
     {
-        public virtual long TableId { get; set; }
+        public long TableId { get; set; }
     }
 }

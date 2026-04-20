@@ -18,11 +18,12 @@ namespace PIHCM.Gen.Repositories
         /// <summary>
         /// 获取代码生成列分页列表
         /// </summary>
-        public Task<List<GenColumn>> SelectGenColumnPageList(Pagination filter)
+        public Task<List<GenColumn>> SelectGenColumnPageList(GenColumnQueryDto query)
         {
-            var q = AsQueryable();
+            var q = AsQueryable()
+                .WhereIF(query.TableId != null, x => x.TableId == query.TableId);
 
-            return PaginationListAsync(q, filter);
+            return PaginationListAsync(q, query);
         }
     }
 }
