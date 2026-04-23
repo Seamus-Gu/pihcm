@@ -5,6 +5,7 @@ using Framework.Cache;
 using Framework.Consul;
 using Framework.Core;
 using Framework.DI;
+using Framework.Grpc;
 using Framework.IdGenerater;
 using Framework.Logger;
 using Framework.OpenApi;
@@ -126,7 +127,7 @@ namespace Framework.Platform
 
             services.AddIdGenerater();
 
-            //builder.Services.AddGrpcService();
+            services.AddGrpcService();
 
             return builder;
         }
@@ -165,7 +166,7 @@ namespace Framework.Platform
                 {
                     endpoints.MapOpenApi();
                 }
-                //endpoints.MapMagicOnionService();
+                endpoints.MapMagicOnionService();
             });
         }
     }

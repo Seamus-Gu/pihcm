@@ -141,8 +141,8 @@ namespace Framework.Core
 
             if (options == null)
             {
-                //Todo : 可以考虑抛出更具体的异常，提示配置项未找到或配置项类型不匹配等问题
-                throw new Exception("");
+                var message = string.Format(FrameworkResource.NotLoadConfig, path);
+                throw new CodeException(ErrorEnum.NotLoadConsul.ToInt(), message);
             }
 
             return options;

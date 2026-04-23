@@ -129,6 +129,9 @@
   <data name="EditSuccess" xml:space="preserve">
     <value>Edit Success.</value>
   </data>
+  <data name="NotLoadConfig" xml:space="preserve">
+    <value>没有加载配置</value>
+  </data>
   <data name="RemoveFailed" xml:space="preserve">
     <value>Delete Failed.</value>
   </data>

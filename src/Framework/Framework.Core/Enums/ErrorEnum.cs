@@ -14,6 +14,12 @@
         /// 表示未加载 Consul 的状态代码。
         /// </summary>
         /// <remarks>可用于指示系统在初始化或运行过程中未检测到 Consul 服务的情形。通常用于错误处理或状态判断。</remarks>
+        NotLoadConfig = 10000000,
+
+        /// <summary>
+        /// 表示未加载 Consul 的状态代码。
+        /// </summary>
+        /// <remarks>可用于指示系统在初始化或运行过程中未检测到 Consul 服务的情形。通常用于错误处理或状态判断。</remarks>
         NotLoadConsul = 10000001,
 
         #endregion

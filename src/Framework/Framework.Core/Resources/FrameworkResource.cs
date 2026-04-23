@@ -6,6 +6,8 @@ namespace Framework.Core
     {
         private static readonly ResourceManager _resourceManager = new ResourceManager(typeof(FrameworkResource));
 
+        public static string NotLoadConfig => GetString(ErrorEnum.NotLoadConfig.GetName());
+
         /// <summary>
         /// 无法加载Consul配置
         /// </summary>

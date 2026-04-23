@@ -44,7 +44,8 @@ namespace Framework.WebApi
                 context.Result = CreateContentResult(result, HttpStatusCode.InternalServerError);
             }
 
-            Log.Error("Message:{0} Source:{1} StackTrace:{2}", context.Exception.Message, context.Exception.Source, context.Exception.StackTrace);
+            var errorMessage = string.Format("Message:{0} Source:{1} StackTrace:{2}", context.Exception.Message, context.Exception.Source, context.Exception.StackTrace);
+            Log.Error(errorMessage);
 
             context.ExceptionHandled = true;
             return Task.CompletedTask;

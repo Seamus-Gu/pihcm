@@ -4,12 +4,13 @@ using MagicOnion.Server;
 
 namespace Framework.Grpc
 {
-    //请使用中文注释
     /// <summary>
-    /// 用于捕获和处理 gRPC 服务中的异常，将异常信息以结构化格式返回给客户端的过滤器。
+    /// Provides a MagicOnion filter attribute that handles exceptions thrown during gRPC service invocation and returns
+    /// structured error information to the client.
     /// </summary>
-    /// <remarks>该过滤器可统一处理服务方法执行过程中抛出的异常，包括自定义的 CodeException 和其他未处理的异常。异常信息会被序列化后作为 gRPC Status
-    /// 返回，便于客户端进行统一的错误处理。适用于需要标准化错误响应的 gRPC 服务场景。</remarks>
+    /// <remarks>This filter captures both CodeException and general exceptions, serializing them into a
+    /// structured response using JSON. It ensures that clients receive consistent error information in the gRPC status.
+    /// Apply this filter to gRPC services to standardize error handling and reporting.</remarks>
     public class GrpcExceptionFilter : MagicOnionFilterAttribute
     {
         public override async ValueTask Invoke(ServiceContext context, Func<ServiceContext, ValueTask> next)
