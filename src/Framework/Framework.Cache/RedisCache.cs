@@ -3,107 +3,134 @@ using StackExchange.Redis;
 
 namespace Framework.Cache
 {
+    /// <summary>
+    /// Provides an implementation of a distributed cache using Redis as the backend store.
+    /// </summary>
+    /// <remarks>This class enables storing, retrieving, and removing cache entries in a Redis database. It
+    /// supports both synchronous and asynchronous operations for common cache actions. Thread safety is ensured for
+    /// connection management. Use this class when you need a scalable, high-performance cache shared across multiple
+    /// application instances.</remarks>
     public class RedisCache : ICache
     {
         private IDatabase _database;
 
-        private IConnectionMultiplexer _connectionMultiplexer;
+        private IConnectionMultiplexer _connMultiplexer;
 
         private readonly object _lock = new object();
 
         public RedisCache()
         {
-            var redisConfig = App.GetConfig<RedisConfig>("Redis");
+            var redisConfig = App.GetConfig<RedisConfig>(FrameworkConstant.REDIS);
 
-            //var redisOptions = App.GetOptions<RedisConfig>();
-            //ThreadPool.SetMinThreads(200, 200);
-            //var options = new ConfigurationOptions
-            //{
-            //    AbortOnConnectFail = redisOptions.AbortOnConnectFail,
-            //    AllowAdmin = redisOptions.AllowAdmin,
-            //    ConnectRetry = redisOptions.ConnectRetry,
-            //    ConnectTimeout = redisOptions.ConnectTimeout,
-            //    KeepAlive = redisOptions.KeepAlive,
-            //    SyncTimeout = redisOptions.SyncTimeout,
-            //    EndPoints = { redisOptions.Host + ":" + redisOptions.Port },
-            //    ServiceName = redisOptions.Name.IsNullOrEmpty() ? null : redisOptions.Name
-            //};
-            //if (!string.IsNullOrWhiteSpace(redisOptions.Password))
-            //{
-            //    options.Password = redisOptions.Password;
-            //}
+            ThreadPool.SetMinThreads(200, 200);
 
-            //_connectionMultiplexer = ConnectionMultiplexer.Connect(options);
-            //_database = _connectionMultiplexer.GetDatabase(redisOptions.Index);
+            var redisConnectionStr = $"{redisConfig.Host}:{redisConfig.Port}";
+            var options = ConfigurationOptions.Parse(redisConnectionStr);
+            options.Password = redisConfig.Password;
 
-
-            //var redisConnectionStr = $"{redisConfig.Host}:{redisConfig.Port}";
-            //var options = ConfigurationOptions.Parse(redisConnectionStr);
-            //options.Password = redisConfig.Password;
-
-            //var connectionMultiplexer = GetConnectRedisMultiplexer(options);
-
-            //DB = connectionMultiplexer.GetDatabase();
+            _connMultiplexer = GetConnectRedisMultiplexer(options);
+            _database = _connMultiplexer.GetDatabase();
         }
 
-        public string Get(string key)
+        /// <summary>
+        /// Retrieves the value associated with the specified key from the data store and deserializes it to the
+        /// specified type.
+        /// </summary>
+        /// <remarks>If the key does not exist or the stored value cannot be deserialized to the specified
+        /// type, the method returns the default value for type T. The method expects the stored value to be in a format
+        /// compatible with the deserialization process.</remarks>
+        /// <typeparam name="T">The type to which the stored value will be deserialized.</typeparam>
+        /// <param name="key">The key whose associated value is to be retrieved. Cannot be null.</param>
+        /// <returns>The deserialized value of type T if the key exists and the value can be deserialized; otherwise, the default
+        /// value for type T.</returns>
+        public T? Get<T>(string key)
         {
-            var redisConfig = App.GetConfig<RedisConfig>("Redis");
-            return "123";
+            var redisValue = _database.StringGet(key);
+
+            if (!redisValue.HasValue)
+            {
+                return default;
+            }
+
+            return JsonUtil.Deseriallize<T>(redisValue!);
         }
 
-        public Task<T> GetAsync<T>(string key)
+        public async Task<T?> GetAsync<T>(string key)
         {
-            throw new NotImplementedException();
+            var redisValue = _database.StringGet(key);
+
+            if (!redisValue.HasValue)
+            {
+                return default;
+            }
+
+            return JsonUtil.Deseriallize<T>(redisValue!);
         }
 
         public bool Set(string key, object value, TimeSpan? timeout)
         {
-            throw new NotImplementedException();
+            var valueStr = JsonUtil.Serialize(value);
+
+            if (timeout is null)
+            {
+                return _database.StringSet(key, valueStr);
+            }
+            else
+            {
+                return _database.StringSet(key, valueStr, timeout.Value);
+            }
         }
 
-        public Task<bool> SetAsync(string key, object value, TimeSpan? timeout)
+        public async Task<bool> SetAsync(string key, object value, TimeSpan? timeout)
         {
-            throw new NotImplementedException();
+            var valueStr = JsonUtil.Serialize(value);
+
+            if (timeout is null)
+            {
+                return await _database.StringSetAsync(key, valueStr);
+            }
+            else
+            {
+                return await _database.StringSetAsync(key, valueStr, timeout.Value);
+            }
         }
 
         public bool Remove(string key)
         {
-            throw new NotImplementedException();
+            return _database.KeyDelete(key);
         }
 
         public Task<bool> RemoveAsync(string key)
         {
-            throw new NotImplementedException();
+            return _database.KeyDeleteAsync(key);
         }
+        private IConnectionMultiplexer GetConnectRedisMultiplexer(ConfigurationOptions options)
+        {
+            if (_connMultiplexer == null)
+            {
+                lock (_lock)
+                {
+                    if (_connMultiplexer != null)
+                    {
+                        return _connMultiplexer;
+                    }
 
-        //private static IConnectionMultiplexer GetConnectRedisMultiplexer(ConfigurationOptions options)
-        //{
-        //    if (_connMultiplexer == null)
-        //    {
-        //        lock (_lock)
-        //        {
-        //            if (_connMultiplexer != null)
-        //            {
-        //                return _connMultiplexer;
-        //            }
+                    return ConnectionMultiplexer.Connect(options);
 
-        //            _connMultiplexer = _connectionMultiplexer.Connect(options);
+                    //Todo 注册事件
 
-        //            //Todo 注册事件
+                    //_connMultiplexer.ConnectionFailed
+                    //_connMultiplexer.ConnectionFailed += MuxerConnectionFailed;
+                    //_connMultiplexer.ConnectionRestored += MuxerConnectionRestored;
+                    //_connMultiplexer.ErrorMessage += MuxerErrorMessage;
+                    //_connMultiplexer.ConfigurationChanged += MuxerConfigurationChanged;
+                    //_connMultiplexer.HashSlotMoved += MuxerHashSlotMoved;
+                    //_connMultiplexer.InternalError += MuxerInternalError;
+                }
+            }
 
-        //            //_connMultiplexer.ConnectionFailed
-        //            //_connMultiplexer.ConnectionFailed += MuxerConnectionFailed;
-        //            //_connMultiplexer.ConnectionRestored += MuxerConnectionRestored;
-        //            //_connMultiplexer.ErrorMessage += MuxerErrorMessage;
-        //            //_connMultiplexer.ConfigurationChanged += MuxerConfigurationChanged;
-        //            //_connMultiplexer.HashSlotMoved += MuxerHashSlotMoved;
-        //            //_connMultiplexer.InternalError += MuxerInternalError;
-        //        }
-        //    }
-
-        //    return _connMultiplexer;
-        //}
+            return _connMultiplexer;
+        }
 
         #region Event
 
@@ -185,317 +212,5 @@ namespace Framework.Cache
         //}
 
         #endregion Event
-
-        #region String
-
-        ///// <summary>
-        ///// get the value for string key
-        ///// </summary>
-        ///// <param name="key"></param>
-        ///// <returns></returns>
-        //public static string Get(string key)
-        //{
-        //object value = null;
-        //var redisValue = _database.StringGet(key);
-        //if (!redisValue.HasValue)
-        //    return default;
-        //var valueEntry = redisValue.ToString().ToObject<ValueInfoEntry>();
-        //value = valueEntry.TypeName == typeof(string).AssemblyQualifiedName
-        //    ? valueEntry.Value
-        //    : valueEntry.Value.ToObject(Type.GetType(valueEntry.TypeName));
-
-        //if (valueEntry.ExpireType == CacheExpireType.Relative)
-        //    _database.KeyExpire(key, valueEntry.ExpireTime);
-        //return (T)value;
-
-        //return _.StringGet(key);
-        //}
-
-        ///// <summary>
-        ///// get the value for string key
-        ///// </summary>
-        ///// <param name="key"></param>
-        ///// <returns></returns>
-        //public static async Task<string> GetAsync(string key)
-        //{
-        //    try
-        //    {
-        //        var result = await DB.StringGetAsync(key);
-
-        //        return result!;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        throw new Exception("123");
-        //    }
-        //}
-
-        ///// <summary>
-        ///// get the value for string key
-        ///// </summary>
-        ///// <param name="key"></param>
-        ///// <returns></returns>
-        //public static RedisValueWithExpiry GetWithExpire(string key)
-        //{
-        //    return DB.StringGetWithExpiry(key);
-        //}
-
-        ///// <summary>
-        ///// get the value for string key
-        ///// </summary>
-        ///// <param name="key"></param>
-        ///// <returns></returns>
-        //public static Task<RedisValueWithExpiry> GetWithExpireAsync(string key)
-        //{
-        //    return DB.StringGetWithExpiryAsync(key);
-        //}
-
-        ///// <summary>
-        ///// set or update the value for string key
-        ///// </summary>
-        ///// <param name="key"></param>
-        ///// <param name="value"></param>
-        ///// <returns></returns>
-        //public static bool Set(string key, string value)
-        //{
-        //    return DB.StringSet(key, value);
-        //}
-
-        ///// <summary>
-        ///// set or update the value for string key
-        ///// </summary>
-        ///// <param name="key"></param>
-        ///// <param name="value"></param>
-        ///// <returns></returns>
-        //public static Task<bool> SetStringAsync(string key, string value)
-        //{
-        //    return DB.StringSetAsync(key, value);
-        //}
-
-        ///// <summary>
-        ///// set or update the value for string key
-        ///// </summary>
-        ///// <param name="key"></param>
-        ///// <param name="value"></param>
-        ///// <returns></returns>
-        //public static bool SetStringWithExpire(string key, string value, TimeSpan? expireMinutes)
-        //{
-        //    return DB.StringSet(key, value, expireMinutes);
-        //}
-
-        ///// <summary>
-        ///// set or update the value for string key
-        ///// </summary>
-        ///// <param name="key"></param>
-        ///// <param name="value"></param>
-        ///// <returns></returns>
-        //public static Task<bool> SetStringWithExpireAsync(string key, string value, TimeSpan? expireMinutes)
-        //{
-        //    return DB.StringSetAsync(key, value, expireMinutes);
-        //}
-
-        ///// <summary>
-        ///// Delete the value for string key
-        ///// </summary>
-        ///// <param name="key"></param>
-        ///// <returns></returns>
-        //public static bool Remove(string key)
-        //{
-        //    return DB.KeyDelete(key);
-        //}
-
-        ///// <summary>
-        ///// Delete the value for string key
-        ///// </summary>
-        ///// <param name="key"></param>
-        ///// <returns></returns>
-        //public static Task<bool> RemoveAsync(string key)
-        //{
-        //    return DB.KeyDeleteAsync(key);
-        //}
-
-
-
-        #endregion String
-
-        ///// <summary>
-        ///// 新增Redis值(有时限)
-        ///// </summary>
-        ///// <param name="key">id</param>
-        ///// <param name="value">值</param>
-        ///// <param name="expireMinutes">时限(分钟,默认30天)</param>
-        ///// <returns></returns>
-        //public static bool AddExpire(string key, string value, int expireMinutes = 24 * 60 * 30)
-        //    => new RedisHelper().AddExpireValue(key, value, expireMinutes);
-
-        ///// <summary>
-        ///// 保存一个对象
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="key"></param>
-        ///// <param name="obj"></param>
-        ///// <returns></returns>
-        //public bool SetStringKey<T>(string key, T obj, int expireMinutes = 0)
-        //{
-        //    string json = JsonConvert.SerializeObject(obj);
-        //    if (expireMinutes > 0)
-        //    {
-        //        return DB.StringSet(key, json, TimeSpan.FromMinutes(expireMinutes));
-        //    }
-        //    else
-        //        return DB.StringSet(key, json);
-        //}
-
-        ///// <summary>
-        ///// 获取一个key的对象
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="key"></param>
-        ///// <returns></returns>
-        //public T GetStringKey<T>(string key) where T : class
-        //{
-        //    var result = DB.StringGet(key);
-        //    if (string.IsNullOrEmpty(result))
-        //    {
-        //        return null;
-        //    }
-        //    try
-        //    {
-        //        return JsonConvert.DeserializeObject<T>(result);
-        //    }
-        //    catch
-        //    {
-        //        return null;
-        //    }
-        //}
-
-        ///// <summary>
-        ///// set or update the HashValue for string key
-        ///// </summary>
-        ///// <param name="key"></param>
-        ///// <param name="hashkey"></param>
-        ///// <param name="value"></param>
-        ///// <returns></returns>
-        //public bool SetHashValue(string key, string hashkey, string value)
-        //{
-        //    return DB.HashSet(key, hashkey, value);
-        //}
-
-        ///// <summary>
-        ///// set or update the HashValue for string key
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="key"></param>
-        ///// <param name="hashkey"></param>
-        ///// <param name="t">defined class</param>
-        ///// <returns></returns>
-        //public bool SetHashValue<T>(String key, string hashkey, T t) where T : class
-        //{
-        //    var json = JsonConvert.SerializeObject(t);
-        //    return DB.HashSet(key, hashkey, json);
-        //}
-
-        //public static void HashSet<T>(string key, List<T> list, Func<T, string> getModelId)
-        //    => new RedisHelper().HashSetValue(key, list, getModelId);
-
-        //public static void HashSetExpire<T>(string key, List<T> list, Func<T, string> getModelId, int expireTime = 24 * 60 * 30)
-        //=> new RedisHelper().HashSetExpireValue(key, list, getModelId, expireTime);
-
-        ///// <summary>
-        ///// 保存一个集合
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="key">Redis Key</param>
-        ///// <param name="list">数据集合</param>
-        ///// <param name="getModelId"></param>
-        //public void HashSetValue<T>(string key, List<T> list, Func<T, string> getModelId)
-        //{
-        //    List<HashEntry> listHashEntry = new List<HashEntry>();
-        //    foreach (var item in list)
-        //    {
-        //        string json = JsonConvert.SerializeObject(item);
-        //        listHashEntry.Add(new HashEntry(getModelId(item), json));
-        //    }
-        //    DB.HashSet(key, listHashEntry.ToArray());
-        //}
-
-        ///// <summary>
-        ///// 保存一个集合
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="key">Redis Key</param>
-        ///// <param name="list">数据集合</param>
-        ///// <param name="getModelId"></param>
-        //private void HashSetExpireValue<T>(string key, List<T> list, Func<T, string> getModelId, int expireTime)
-        //{
-        //    List<HashEntry> listHashEntry = new List<HashEntry>();
-        //    foreach (var item in list)
-        //    {
-        //        string json = JsonConvert.SerializeObject(item);
-        //        listHashEntry.Add(new HashEntry(getModelId(item), json));
-        //    }
-        //    DB.HashSet(key, listHashEntry.ToArray());
-        //    DB.KeyExpire(key, TimeSpan.FromMinutes(expireTime));
-        //}
-
-        ///// <summary>
-        ///// 获取hashkey所有的值
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="key"></param>
-        ///// <returns></returns>
-        //public List<T> HashGetAll<T>(string key) where T : class
-        //{
-        //    List<T> result = new List<T>();
-        //    HashEntry[] arr = DB.HashGetAll(key);
-        //    foreach (var item in arr)
-        //    {
-        //        if (!item.Value.IsNullOrEmpty)
-        //        {
-        //            result.Add(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(item.Value));
-        //        }
-        //    }
-        //    return result;
-        //}
-
-        ///// <summary>
-        ///// get the HashValue for string key  and hashkey
-        ///// </summary>
-        ///// <param name="key">Represents a key that can be stored in redis</param>
-        ///// <param name="hashkey"></param>
-        ///// <returns></returns>
-        //public RedisValue GetHashValue(string key, string hashkey)
-        //{
-        //    RedisValue result = DB.HashGet(key, hashkey);
-        //    return result;
-        //}
-
-        ///// <summary>
-        ///// get the HashValue for string key  and hashkey
-        ///// </summary>
-        ///// <param name="key">Represents a key that can be stored in redis</param>
-        ///// <param name="hashkey"></param>
-        ///// <returns></returns>
-        //public T GetHashValue<T>(string key, string hashkey) where T : class
-        //{
-        //    RedisValue result = DB.HashGet(key, hashkey);
-        //    if (string.IsNullOrEmpty(result))
-        //    {
-        //        return null;
-        //    }
-        //    T t = JsonConvert.DeserializeObject<T>(result);
-        //    return null;
-        //}
-
-        ///// <summary>
-        ///// delete the HashValue for string key  and hashkey
-        ///// </summary>
-        ///// <param name="key"></param>
-        ///// <param name="hashkey"></param>
-        ///// <returns></returns>
-        //public bool DeleteHashValue(string key, string hashkey)
-        //{
-        //    return DB.HashDelete(key, hashkey);
-        //}
     }
 }

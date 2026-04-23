@@ -7,7 +7,7 @@ namespace Framework.Core
     //Todo Json序列化和反序列化
     public class JsonUtil
     {
-        public static T? Deseriallize<T>(string body) where T : class
+        public static T? Deseriallize<T>(string body)
         {
             JsonSerializerOptions options = new JsonSerializerOptions();
 

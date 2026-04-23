@@ -13,6 +13,7 @@ namespace Framework.Consul
         private readonly TimeSpan _timerCycle;
         private ulong _lastIndex;
         private Task? _pollTask;
+        private readonly CancellationTokenSource _pollCts = new CancellationTokenSource();
 
         /// <summary>
         /// 构造函数
@@ -87,17 +88,35 @@ namespace Framework.Consul
         /// </summary>
         private async Task PollReaload()
         {
-            while (true)
+            var currentName = $"{_envName}{DelimitersConstant.SLASH}{_serviceName}";
+            var commonName = $"{_envName}{DelimitersConstant.SLASH}{FrameworkConstant.COMMON}";
+
+            var pollDelay = TimeSpan.FromSeconds(2);
+            var token = _pollCts.Token;
+
+            while (!token.IsCancellationRequested)
             {
                 var result = await GetKvPairList(true).ConfigureAwait(false);
 
                 if (result.LastIndex > _lastIndex)
                 {
-                    var currentName = _envName + DelimitersConstant.SLASH + _serviceName;
-                    var commonName = _envName + DelimitersConstant.SLASH + FrameworkConstant.COMMON;
+                    var configList = result.Response
+                        .Where(t => t.Key == commonName || t.Key == currentName)
+                        .ToList();
 
-                    var list = result.Response.Where(t => t.Key == commonName || t.Key == currentName).ToList();
-                    this.Data = list.SelectMany(t => t.ToConfigDic()).ToDictionary(t => t.Key, t => t.Value);
+                    if (configList.Count == 0)
+                    {
+                        await Task.Delay(pollDelay, token).ConfigureAwait(false);
+                        continue;
+                    }
+
+                    // 转换配置字典（线程安全赋值）
+                    var newConfigData = configList
+                        .SelectMany(t => t.ToConfigDic())
+                        .ToDictionary(t => t.Key, t => t.Value);
+
+
+                    this.Data = newConfigData;
 
                     OnReload();
                 }

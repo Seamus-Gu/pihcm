@@ -51,7 +51,7 @@
         #endregion
 
         #region Configurations (数据库/缓存/安全/存储/邮件/任务)
-        //public const string REDIS = "Redis";
+        public const string REDIS = "Redis";
         //public const string EMAIL = "Email";
         //public const string JOB = "Job";
         public const string SECURITY = "Security";

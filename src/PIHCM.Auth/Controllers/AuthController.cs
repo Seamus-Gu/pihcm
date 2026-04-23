@@ -30,10 +30,9 @@ namespace PIHCM.Auth.Controllers
 
             form.Password = EncryptUtil.RSADecrypt(form.Password, securityConfig.FrontPrivateKey);
 
-            App.Cache.Get("123");
-            //var loginUser = await _remoteSysUserService.Service.GetUserInfo(form.UserName);
+            var loginUser = await _remoteSysUserService.Service.GetUserInfo(form.UserName);
 
-            //await _authService.CheckLogin(securityConfig, form.Password, loginUser);
+            await _authService.CheckLogin(securityConfig, form.Password, loginUser);
 
             //var token = await LoginUtil.LoginByDevice(loginUser, securityConfig, DeviceEnum.Web);
 
