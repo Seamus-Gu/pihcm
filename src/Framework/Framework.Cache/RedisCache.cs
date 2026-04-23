@@ -1,18 +1,41 @@
-﻿using StackExchange.Redis;
+﻿using Framework.Core;
+using StackExchange.Redis;
 
 namespace Framework.Cache
 {
-    public static class RedisCache
+    public class RedisCache : ICache
     {
-        private static IDatabase DB { get; set; }
+        private IDatabase _database;
 
-        private static IConnectionMultiplexer? _connMultiplexer;
+        private IConnectionMultiplexer _connectionMultiplexer;
 
-        private static readonly object _lock = new object();
+        private readonly object _lock = new object();
 
-        static RedisCache()
+        public RedisCache()
         {
-            //var redisConfig = App.GetConfig<RedisConfig>(FrameworkConstant.REDIS);
+            var redisConfig = App.GetConfig<RedisConfig>("Redis");
+
+            //var redisOptions = App.GetOptions<RedisConfig>();
+            //ThreadPool.SetMinThreads(200, 200);
+            //var options = new ConfigurationOptions
+            //{
+            //    AbortOnConnectFail = redisOptions.AbortOnConnectFail,
+            //    AllowAdmin = redisOptions.AllowAdmin,
+            //    ConnectRetry = redisOptions.ConnectRetry,
+            //    ConnectTimeout = redisOptions.ConnectTimeout,
+            //    KeepAlive = redisOptions.KeepAlive,
+            //    SyncTimeout = redisOptions.SyncTimeout,
+            //    EndPoints = { redisOptions.Host + ":" + redisOptions.Port },
+            //    ServiceName = redisOptions.Name.IsNullOrEmpty() ? null : redisOptions.Name
+            //};
+            //if (!string.IsNullOrWhiteSpace(redisOptions.Password))
+            //{
+            //    options.Password = redisOptions.Password;
+            //}
+
+            //_connectionMultiplexer = ConnectionMultiplexer.Connect(options);
+            //_database = _connectionMultiplexer.GetDatabase(redisOptions.Index);
+
 
             //var redisConnectionStr = $"{redisConfig.Host}:{redisConfig.Port}";
             //var options = ConfigurationOptions.Parse(redisConnectionStr);
@@ -23,33 +46,64 @@ namespace Framework.Cache
             //DB = connectionMultiplexer.GetDatabase();
         }
 
-        private static IConnectionMultiplexer GetConnectRedisMultiplexer(ConfigurationOptions options)
+        public string Get(string key)
         {
-            if (_connMultiplexer == null)
-            {
-                lock (_lock)
-                {
-                    if (_connMultiplexer != null)
-                    {
-                        return _connMultiplexer;
-                    }
-
-                    _connMultiplexer = ConnectionMultiplexer.Connect(options);
-
-                    //Todo 注册事件
-
-                    //_connMultiplexer.ConnectionFailed
-                    //_connMultiplexer.ConnectionFailed += MuxerConnectionFailed;
-                    //_connMultiplexer.ConnectionRestored += MuxerConnectionRestored;
-                    //_connMultiplexer.ErrorMessage += MuxerErrorMessage;
-                    //_connMultiplexer.ConfigurationChanged += MuxerConfigurationChanged;
-                    //_connMultiplexer.HashSlotMoved += MuxerHashSlotMoved;
-                    //_connMultiplexer.InternalError += MuxerInternalError;
-                }
-            }
-
-            return _connMultiplexer;
+            var redisConfig = App.GetConfig<RedisConfig>("Redis");
+            return "123";
         }
+
+        public Task<T> GetAsync<T>(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Set(string key, object value, TimeSpan? timeout)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> SetAsync(string key, object value, TimeSpan? timeout)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Remove(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> RemoveAsync(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        //private static IConnectionMultiplexer GetConnectRedisMultiplexer(ConfigurationOptions options)
+        //{
+        //    if (_connMultiplexer == null)
+        //    {
+        //        lock (_lock)
+        //        {
+        //            if (_connMultiplexer != null)
+        //            {
+        //                return _connMultiplexer;
+        //            }
+
+        //            _connMultiplexer = _connectionMultiplexer.Connect(options);
+
+        //            //Todo 注册事件
+
+        //            //_connMultiplexer.ConnectionFailed
+        //            //_connMultiplexer.ConnectionFailed += MuxerConnectionFailed;
+        //            //_connMultiplexer.ConnectionRestored += MuxerConnectionRestored;
+        //            //_connMultiplexer.ErrorMessage += MuxerErrorMessage;
+        //            //_connMultiplexer.ConfigurationChanged += MuxerConfigurationChanged;
+        //            //_connMultiplexer.HashSlotMoved += MuxerHashSlotMoved;
+        //            //_connMultiplexer.InternalError += MuxerInternalError;
+        //        }
+        //    }
+
+        //    return _connMultiplexer;
+        //}
 
         #region Event
 
@@ -134,76 +188,89 @@ namespace Framework.Cache
 
         #region String
 
-        /// <summary>
-        /// get the value for string key
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public static string Get(string key)
-        {
-            return DB.StringGet(key);
-        }
+        ///// <summary>
+        ///// get the value for string key
+        ///// </summary>
+        ///// <param name="key"></param>
+        ///// <returns></returns>
+        //public static string Get(string key)
+        //{
+        //object value = null;
+        //var redisValue = _database.StringGet(key);
+        //if (!redisValue.HasValue)
+        //    return default;
+        //var valueEntry = redisValue.ToString().ToObject<ValueInfoEntry>();
+        //value = valueEntry.TypeName == typeof(string).AssemblyQualifiedName
+        //    ? valueEntry.Value
+        //    : valueEntry.Value.ToObject(Type.GetType(valueEntry.TypeName));
 
-        /// <summary>
-        /// get the value for string key
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public static async Task<string> GetAsync(string key)
-        {
-            try
-            {
-                var result = await DB.StringGetAsync(key);
+        //if (valueEntry.ExpireType == CacheExpireType.Relative)
+        //    _database.KeyExpire(key, valueEntry.ExpireTime);
+        //return (T)value;
 
-                return result!;
-            }
-            catch (Exception)
-            {
-                throw new Exception("123");
-            }
-        }
+        //return _.StringGet(key);
+        //}
 
-        /// <summary>
-        /// get the value for string key
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public static RedisValueWithExpiry GetWithExpire(string key)
-        {
-            return DB.StringGetWithExpiry(key);
-        }
+        ///// <summary>
+        ///// get the value for string key
+        ///// </summary>
+        ///// <param name="key"></param>
+        ///// <returns></returns>
+        //public static async Task<string> GetAsync(string key)
+        //{
+        //    try
+        //    {
+        //        var result = await DB.StringGetAsync(key);
 
-        /// <summary>
-        /// get the value for string key
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public static Task<RedisValueWithExpiry> GetWithExpireAsync(string key)
-        {
-            return DB.StringGetWithExpiryAsync(key);
-        }
+        //        return result!;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw new Exception("123");
+        //    }
+        //}
 
-        /// <summary>
-        /// set or update the value for string key
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static bool Set(string key, string value)
-        {
-            return DB.StringSet(key, value);
-        }
+        ///// <summary>
+        ///// get the value for string key
+        ///// </summary>
+        ///// <param name="key"></param>
+        ///// <returns></returns>
+        //public static RedisValueWithExpiry GetWithExpire(string key)
+        //{
+        //    return DB.StringGetWithExpiry(key);
+        //}
 
-        /// <summary>
-        /// set or update the value for string key
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static Task<bool> SetStringAsync(string key, string value)
-        {
-            return DB.StringSetAsync(key, value);
-        }
+        ///// <summary>
+        ///// get the value for string key
+        ///// </summary>
+        ///// <param name="key"></param>
+        ///// <returns></returns>
+        //public static Task<RedisValueWithExpiry> GetWithExpireAsync(string key)
+        //{
+        //    return DB.StringGetWithExpiryAsync(key);
+        //}
+
+        ///// <summary>
+        ///// set or update the value for string key
+        ///// </summary>
+        ///// <param name="key"></param>
+        ///// <param name="value"></param>
+        ///// <returns></returns>
+        //public static bool Set(string key, string value)
+        //{
+        //    return DB.StringSet(key, value);
+        //}
+
+        ///// <summary>
+        ///// set or update the value for string key
+        ///// </summary>
+        ///// <param name="key"></param>
+        ///// <param name="value"></param>
+        ///// <returns></returns>
+        //public static Task<bool> SetStringAsync(string key, string value)
+        //{
+        //    return DB.StringSetAsync(key, value);
+        //}
 
         ///// <summary>
         ///// set or update the value for string key
@@ -227,25 +294,27 @@ namespace Framework.Cache
         //    return DB.StringSetAsync(key, value, expireMinutes);
         //}
 
-        /// <summary>
-        /// Delete the value for string key
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public static bool Remove(string key)
-        {
-            return DB.KeyDelete(key);
-        }
+        ///// <summary>
+        ///// Delete the value for string key
+        ///// </summary>
+        ///// <param name="key"></param>
+        ///// <returns></returns>
+        //public static bool Remove(string key)
+        //{
+        //    return DB.KeyDelete(key);
+        //}
 
-        /// <summary>
-        /// Delete the value for string key
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public static Task<bool> RemoveAsync(string key)
-        {
-            return DB.KeyDeleteAsync(key);
-        }
+        ///// <summary>
+        ///// Delete the value for string key
+        ///// </summary>
+        ///// <param name="key"></param>
+        ///// <returns></returns>
+        //public static Task<bool> RemoveAsync(string key)
+        //{
+        //    return DB.KeyDeleteAsync(key);
+        //}
+
+
 
         #endregion String
 

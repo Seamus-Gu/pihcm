@@ -57,7 +57,7 @@ namespace Framework.Platform
 
             services.AddHttpContextAccessor();
 
-            services.AddCache();
+            services.AddCache(options.EnableRedisCache);
 
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
             builder.Host.ConfigureContainer<ContainerBuilder>((context, containerBuilder) =>

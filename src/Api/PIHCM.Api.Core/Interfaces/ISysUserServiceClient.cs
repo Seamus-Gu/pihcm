@@ -1,5 +1,4 @@
 ﻿
-
 namespace PIHCM.Api.Core
 {
     public interface ISysUserServiceClient : IServiceClient<ISysUserServiceClient>
@@ -9,6 +8,6 @@ namespace PIHCM.Api.Core
         /// </summary>
         /// <param name="username"> 用户名 </param>
         /// <returns> 用户信息 </returns>
-        UnaryResult<LoginUser> GetUserInfo(string username);
+        UnaryResult<LoginUserDto> GetUserInfo(string username);
     }
 }

@@ -76,11 +76,6 @@
         PasswordError = 020002,
 
         /// <summary>
-        /// 用户不存在
-        /// </summary>
-        UserNotExist = 030001,
-
-        /// <summary>
         /// 用户禁用
         /// </summary>
         UserDisabled = 030002,

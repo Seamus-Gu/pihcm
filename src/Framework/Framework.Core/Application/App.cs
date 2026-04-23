@@ -45,6 +45,16 @@ namespace Framework.Core
         public static HttpContext HttpContext => RootServices.GetService<IHttpContextAccessor>()?.HttpContext!;
 
         /// <summary>
+        /// 缓存
+        /// </summary>
+        public static ICache Cache => GetService<ICache>();
+
+        /// <summary>
+        /// 当前用户
+        /// </summary>
+        public static ICurrentUser CurrentUser => GetService<ICurrentUser>();
+
+        /// <summary>
         /// 解析服务提供器
         /// </summary>
         /// <param name="serviceType"></param>
@@ -67,7 +77,8 @@ namespace Framework.Core
             {
                 return httpContext.RequestServices;
             }
-            else if (RootServices != null) // 第三选择，创建新的作用域并返回服务提供器
+
+            if (RootServices != null) // 第三选择，创建新的作用域并返回服务提供器
             {
                 var scoped = RootServices.CreateScope();
                 return scoped.ServiceProvider;
@@ -131,9 +142,8 @@ namespace Framework.Core
         /// <summary>
         /// 获取配置
         /// </summary>
-        /// <typeparam name="TOptions">强类型选项类</typeparam>
+        /// <typeparam name="TConfig">强类型选项类</typeparam>
         /// <param name="path">配置中对应的Key</param>
-        /// <param name="loadPostConfigure"></param>
         /// <returns>TOptions</returns>
         public static TConfig GetConfig<TConfig>(string path)
         {

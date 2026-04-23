@@ -1,5 +1,4 @@
-﻿
-namespace Seed.Core.RemoteServices
+﻿namespace Seed.Core.RemoteServices
 {
     public class SysUserServiceClients : ServiceBase<ISysUserServiceClient>, ISysUserServiceClient
     {
@@ -20,13 +19,13 @@ namespace Seed.Core.RemoteServices
             _sysMenuRepository = sysMenuRepository;
         }
 
-        public async UnaryResult<LoginUser> GetUserInfo(string userName)
+        public async UnaryResult<LoginUserDto> GetUserInfo(string userName)
         {
             var user = await _sysUserRepository.SelectByUserName(userName);
 
             if (user == null)
             {
-                throw ErrorEnum.UserNotExist.ToCodeException(_localizer, userName);
+                throw CoreErrorEnum.UserNotExist.ToCodeException(_localizer, userName);
             }
 
             CheckUserStatus(user);
@@ -45,7 +44,7 @@ namespace Seed.Core.RemoteServices
             //    permissions = await _sysMenuRepository.SelectPermissionsByRoleIds(roleIds);
             //}
 
-            return new LoginUser()
+            return new LoginUserDto()
             {
                 UserId = user.Id,
                 UserName = user.UserName,

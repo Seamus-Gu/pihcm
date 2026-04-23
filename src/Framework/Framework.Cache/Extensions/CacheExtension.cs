@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Framework.Core;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Framework.Cache
 {
@@ -16,6 +17,12 @@ namespace Framework.Cache
             services.AddMemoryCache();
             // 分布式缓存
             services.AddDistributedMemoryCache();
+
+            if (useRedis)
+            {
+                services.AddSingleton<ICache, RedisCache>();
+                return;
+            }
         }
     }
 }

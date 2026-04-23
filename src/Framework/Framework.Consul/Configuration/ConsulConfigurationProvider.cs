@@ -94,7 +94,7 @@ namespace Framework.Consul
                 if (result.LastIndex > _lastIndex)
                 {
                     var currentName = _envName + DelimitersConstant.SLASH + _serviceName;
-                    var commonName = _envName + DelimitersConstant.SLASH + FrameworkConstant.FRAMEWORK_PREFIX;
+                    var commonName = _envName + DelimitersConstant.SLASH + FrameworkConstant.COMMON;
 
                     var list = result.Response.Where(t => t.Key == commonName || t.Key == currentName).ToList();
                     this.Data = list.SelectMany(t => t.ToConfigDic()).ToDictionary(t => t.Key, t => t.Value);
