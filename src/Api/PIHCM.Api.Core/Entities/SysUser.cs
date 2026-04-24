@@ -5,27 +5,31 @@
         /// <summary>
         /// 用户账号
         /// </summary>
+        [SugarColumn(Length = 50)]
         public string UserName { get; set; } = string.Empty;
 
         /// <summary>
         /// 昵称
         /// </summary>
+        [SugarColumn(Length = 50)]
         public string NickName { get; set; } = string.Empty;
 
         /// <summary>
         /// 邮箱
         /// </summary>
+        [SugarColumn(Length = 50)]
         public string? Email { get; set; }
 
         /// <summary>
         /// 电话号码
         /// </summary>
+        [SugarColumn(Length = 11)]
         public string? PhoneNumber { get; set; }
 
         /// <summary>
         /// 性别
         /// </summary>
-        public string? Sex { get; set; }
+        public int? Sex { get; set; }
 
         /// <summary>
         /// 头像

@@ -18,7 +18,7 @@ namespace Framework.Grpc
                      .Split(DelimitersConstant.DOT)
                      .LastOrDefault() ?? string.Empty;
 
-            var serviceChannel = _grpcChannelFactory.Get(FrameworkConstant.FRAMEWORK_PREFIX + DelimitersConstant.DOT + lastSegment).Result;
+            var serviceChannel = _grpcChannelFactory.Get(FrameworkConstant.PREFIX + DelimitersConstant.DOT + lastSegment).Result;
             _proxy = MagicOnionClient.Create<TService>(serviceChannel);
         }
     }

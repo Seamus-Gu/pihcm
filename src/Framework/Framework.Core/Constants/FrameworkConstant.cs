@@ -4,7 +4,7 @@
     {
         #region 项目基础
         // 项目前缀
-        public const string FRAMEWORK_PREFIX = "PIHCM";
+        public const string PREFIX = "PIHCM";
         // 数据库雪花Id
         public const string SNOW_ID = "SnowId";
         // 基础配置项

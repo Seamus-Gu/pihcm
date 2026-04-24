@@ -216,29 +216,33 @@ namespace Framework.Security
         }
 
         /// <summary>
-        /// 创建UserInfo
+        /// Asynchronously stores the specified user information in the cache using the provided token identifier and
+        /// sets the cache entry to expire after the specified timeout period.
         /// </summary>
-        /// <param name="tokenId"></param>
-        /// <param name="activityTimeOut"></param>
+        /// <param name="tokenId">The unique identifier for the user's authentication token. Used as part of the cache key.</param>
+        /// <param name="loginUser">The user information to store in the cache. Cannot be null.</param>
+        /// <param name="tokenTimeOut">The cache expiration time, in minutes. Must be a positive integer.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         private static async Task SetUserInfo(string tokenId, LoginUser loginUser, int tokenTimeOut)
         {
             var key = AuthConstant.USER_INFO + tokenId;
-            var val = JsonUtil.Serialize(loginUser);
 
-            await App.Cache.SetAsync(key, val, TimeSpan.FromMinutes(tokenTimeOut));
+            await App.Cache.SetAsync(key, loginUser, TimeSpan.FromMinutes(tokenTimeOut));
         }
 
+
         /// <summary>
-        /// 创建UserInfo
+        /// Asynchronously stores the specified user information in the cache using the provided token identifier as the
+        /// key.
         /// </summary>
-        /// <param name="tokenId"></param>
-        /// <param name="activityTimeOut"></param>
+        /// <param name="tokenId">The unique token identifier used as the cache key. Cannot be null or empty.</param>
+        /// <param name="loginUser">The user information to store in the cache. Cannot be null.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         private static async Task SetUserInfo(string tokenId, LoginUser loginUser)
         {
             var key = AuthConstant.USER_INFO + tokenId;
-            var val = JsonUtil.Serialize(loginUser);
 
-            await App.Cache.SetAsync(key, val);
+            await App.Cache.SetAsync(key, loginUser);
         }
     }
 }

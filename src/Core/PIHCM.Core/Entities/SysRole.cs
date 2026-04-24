@@ -8,11 +8,13 @@ namespace PIHCM.Core.Entities
         /// <summary>
         /// 角色名称
         /// </summary>
+        [SugarColumn(Length = 50)]
         public string RoleName { get; set; } = string.Empty;
 
         /// <summary>
         /// 角色权限字符串
         /// </summary>
+        [SugarColumn(Length = 100)]
         public string RoleKey { get; set; } = string.Empty;
 
         /// <summary>

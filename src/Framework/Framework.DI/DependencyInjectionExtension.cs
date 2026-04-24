@@ -19,7 +19,7 @@ namespace Framework.DI
         public static void InitAutofac(this ContainerBuilder builder)
         {
             var assemblyList = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(t => t.FullName != null && t.FullName.Contains(FrameworkConstant.FRAMEWORK_PREFIX));
+                .Where(t => t.FullName != null && t.FullName.Contains(FrameworkConstant.PREFIX));
 
             builder.RegisterAssemblyTypes(assemblyList.ToArray())
                 .Where(t => t.IsClass && !t.IsAbstract)

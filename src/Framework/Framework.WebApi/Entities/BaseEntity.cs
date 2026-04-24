@@ -31,21 +31,25 @@ namespace Framework.WebApi
         /// <summary>
         /// Gets or sets the date and time when the entity was created.
         /// </summary>
+        [SugarColumn(IsOnlyIgnoreUpdate = true)]
         public virtual DateTime CreatedAt { get; set; }
 
         /// <summary>
         /// Gets or sets the identifier of the user who created the entity.
         /// </summary>
+        [SugarColumn(Length = 50, IsOnlyIgnoreUpdate = true)]
         public virtual string CreatedBy { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the date and time when the entity was last updated.
         /// </summary>
+        [SugarColumn(IsOnlyIgnoreInsert = true)]
         public virtual DateTime? UpdatedAt { get; set; }
 
         /// <summary>
         /// Gets or sets the identifier of the user who last updated the entity.
         /// </summary>
+        [SugarColumn(Length = 50, IsOnlyIgnoreInsert = true)]
         public virtual string? UpdatedBy { get; set; }
     }
 }

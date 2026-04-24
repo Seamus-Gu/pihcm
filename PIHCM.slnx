@@ -25,6 +25,7 @@
         <Project Path="src/Framework/Framework.DI/Framework.DI.csproj" Id="cf1a7e29-6f47-4c59-8723-1999f25eb57c" />
         <Project Path="src/Framework/Framework.Grpc/Framework.Grpc.csproj" Id="f6225d35-0aa2-4be1-95a3-39571c4594e8" />
         <Project Path="src/Framework/Framework.IdGenerater/Framework.IdGenerater.csproj" Id="b17a49b6-67a1-4214-a8d7-8541c3ef2b7b" />
+        <Project Path="src/Framework/Framework.IPLocation/Framework.IPLocation.csproj" Id="63f58b9e-049e-486f-bc87-c77bc61b6caf" />
         <Project Path="src/Framework/Framework.Logger/Framework.Logger.csproj" Id="ed895fd3-320a-4927-8b22-2c1a4b4f5a7a" />
         <Project Path="src/Framework/Framework.MiniProfiler/Framework.MiniProfiler.csproj" Id="0d937e8f-08f4-490e-b221-c845084a7cd8" />
         <Project Path="src/Framework/Framework.OpenApi/Framework.OpenApi.csproj" Id="9087d532-3e91-4d7b-8f83-2b3ee807e20c" />

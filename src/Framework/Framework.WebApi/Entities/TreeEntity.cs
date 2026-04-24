@@ -6,7 +6,7 @@ namespace Framework.WebApi
     /// 树基类
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class   TreeEntity<T> : BaseEntity
+    public class TreeEntity<T> : BaseEntity
     {
         /// <summary>
         /// 父Id
@@ -26,6 +26,7 @@ namespace Framework.WebApi
         /// <summary>
         /// 祖级列表
         /// </summary>
+        [SugarColumn(Length = 1000)]
         public virtual string? TreeIds { get; set; }
 
         /// <summary>
