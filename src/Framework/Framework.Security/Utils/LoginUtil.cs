@@ -64,7 +64,7 @@ namespace Framework.Security
             var tokenId = App.HttpContext.Request.Headers[AuthConstant.HEADER_TOKEN];
             var key = AuthConstant.LAST_ACTIVITY + tokenId;
 
-            //await RedisCache.RemoveAsync(key);
+            await App.Cache.RemoveAsync(key);
         }
 
         /// <summary>
@@ -84,14 +84,11 @@ namespace Framework.Security
                 }
 
                 var tokenId = App.HttpContext.Request.Headers[AuthConstant.HEADER_TOKEN];
-                //var redisData = await RedisCache.GetAsync(AuthConstant.USER_INFO + tokenId);
-                //var result = JsonUtil.Deseriallize<LoginUser>(redisData)!;
+                var redisData = await App.Cache.GetAsync<LoginUser>(AuthConstant.USER_INFO + tokenId);
 
-                //App.HttpContext.Items[AuthConstant.LOGIN_USER] = result;
+                App.HttpContext.Items[AuthConstant.LOGIN_USER] = redisData;
 
-                //return result;
-
-                return null;
+                return redisData ?? new();
             }
             catch
             {
@@ -155,14 +152,9 @@ namespace Framework.Security
         /// <returns></returns>
         private static async Task<List<TokenSign>> GetTokenList(long userId)
         {
-            //var tokenListData = await RedisCache.GetAsync(AuthConstant.TOKENS + CryptoUtil.MD5(userId.ToString()));
+            var result = await App.Cache.GetAsync<List<TokenSign>>(AuthConstant.TOKENS + EncryptUtil.MD5(userId.ToString()));
 
-            //if (!tokenListData.IsNullOrEmpty())
-            //{
-            //    return JsonUtil.Deseriallize<List<TokenSign>>(tokenListData)!;
-            //}
-
-            return new List<TokenSign>();
+            return result ?? new();
         }
 
         /// <summary>
@@ -174,7 +166,7 @@ namespace Framework.Security
         {
             var key = AuthConstant.LAST_ACTIVITY + tokenId;
             var val = DateTime.Now.AddMinutes(activityTimeOut).ToDateLongString();
-            //await RedisCache.SetStringWithExpireAsync(key, val, TimeSpan.FromMinutes(tokenTimeOut));
+            await App.Cache.SetAsync(key, val, TimeSpan.FromMinutes(tokenTimeOut));
         }
 
         /// <summary>
@@ -206,14 +198,9 @@ namespace Framework.Security
         /// <param name="activityTimeOut"></param>
         private static async Task SubstitutedUser(string tokenId, int tokenTimeOut)
         {
-            //var cache = App.GetService<IDistributedCache>();
-            //var options = new DistributedCacheEntryOptions
-            //{
-            //    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(tokenTimeOut),
-            //};
-            //var key = AuthConstant.LAST_ACTIVITY + tokenId;
+            var key = AuthConstant.LAST_ACTIVITY + tokenId;
 
-            //await cache.SetStringAsync(key, AuthConstant.SUBSTITUTED, options);
+            await App.Cache.SetAsync(key, AuthConstant.SUBSTITUTED, TimeSpan.FromMinutes(tokenTimeOut));
         }
 
         /// <summary>
@@ -223,11 +210,9 @@ namespace Framework.Security
         /// <param name="activityTimeOut"></param>
         private static async Task SetTokenList(long userId, List<TokenSign> list)
         {
-            //var cache = App.GetService<IDistributedCache>();
-            //var key = AuthConstant.TOKENS + CryptoUtil.MD5(userId.ToString());
-            //var val = JsonUtil.Serialize(list);
+            var key = AuthConstant.TOKENS + EncryptUtil.MD5(userId.ToString());
 
-            //await cache.SetStringAsync(key, val);
+            await App.Cache.SetAsync(key, list);
         }
 
         /// <summary>
@@ -240,7 +225,7 @@ namespace Framework.Security
             var key = AuthConstant.USER_INFO + tokenId;
             var val = JsonUtil.Serialize(loginUser);
 
-            //await RedisCache.SetStringWithExpireAsync(key, val, TimeSpan.FromMinutes(tokenTimeOut));
+            await App.Cache.SetAsync(key, val, TimeSpan.FromMinutes(tokenTimeOut));
         }
 
         /// <summary>
@@ -253,7 +238,7 @@ namespace Framework.Security
             var key = AuthConstant.USER_INFO + tokenId;
             var val = JsonUtil.Serialize(loginUser);
 
-            //await RedisCache.SetStringAsync(key, val);
+            await App.Cache.SetAsync(key, val);
         }
     }
 }

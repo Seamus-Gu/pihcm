@@ -34,14 +34,13 @@ namespace PIHCM.Auth.Controllers
 
             await _authService.CheckLogin(securityConfig, form.Password, loginUser);
 
-            //var token = await LoginUtil.LoginByDevice(loginUser, securityConfig, DeviceEnum.Web);
+            var token = await LoginUtil.LoginByDevice(loginUser, securityConfig, DeviceEnum.Web);
 
             //todo 登录日志
 
             return Success(new
             {
-                test = "123"
-                //access_token = token
+                access_token = token
             });
         }
 

@@ -41,7 +41,7 @@
         /// <param name="value">值</param>
         /// <param name="timeout">过期时间</param>
         /// <returns>添加结果</returns>
-        Task<bool> SetAsync(string key, object value, TimeSpan? timeout);
+        Task<bool> SetAsync(string key, object value, TimeSpan? timeout = null);
 
         #endregion
 

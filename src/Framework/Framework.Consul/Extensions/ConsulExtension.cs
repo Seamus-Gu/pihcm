@@ -6,16 +6,21 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Framework.Consul
 {
     /// <summary>
-    /// Consul 扩展
+    /// Provides extension methods for integrating Consul as a configuration source and registering a Consul client for
+    /// dependency injection.
     /// </summary>
+    /// <remarks>These extension methods enable applications to retrieve configuration values from a Consul
+    /// key-value store and to register a Consul client for use with dependency injection. Ensure that the Consul
+    /// service is accessible and properly configured before using these methods.</remarks>
     public static class ConsulExtension
     {
         /// <summary>
-        /// 使用 Consul 动态加载应用程序配置。
+        /// Adds Consul as a configuration source to the specified configuration builder.
         /// </summary>
-        /// <remarks>此方法允许应用程序通过 Consul 实现集中式配置管理。添加后，配置更改可在 Consul
-        /// 中动态生效，无需重启应用。适用于需要分布式配置中心的场景。</remarks>
-        /// <param name="configuration">要扩展的配置生成器。用于注册 Consul 配置源，不能为 null。</param>
+        /// <remarks>This method enables the application to retrieve configuration values from a Consul
+        /// key-value store. It uses the application's name and environment to determine the configuration path. Ensure
+        /// that the Consul service is accessible and properly configured before calling this method.</remarks>
+        /// <param name="configuration">The configuration builder to which the Consul configuration source will be added. Cannot be null.</param>
         public static void AddConsulConfiguration(this IConfigurationBuilder configuration)
         {
             var appName = App.AppName;
@@ -38,10 +43,12 @@ namespace Framework.Consul
         }
 
         /// <summary>
-        /// 向依赖注入容器中注册 Consul 客户端服务，以便应用程序可以通过 IConsulClient 接口访问 Consul。
+        /// Registers a singleton Consul client with the specified service collection for dependency injection.
         /// </summary>
-        /// <remarks>此方法将 Consul 客户端以单例方式注册，便于在应用程序中统一管理 Consul 连接。调用前需确保已正确配置 Consul 的主机和端口信息。</remarks>
-        /// <param name="service">要向其添加 Consul 客户端服务的 IServiceCollection 实例。不能为空。</param>
+        /// <remarks>This method configures the Consul client using application configuration values for
+        /// the Consul host and port. The registered client can be injected into dependent services via the
+        /// IConsulClient interface.</remarks>
+        /// <param name="service">The service collection to which the Consul client will be added. Cannot be null.</param>
         public static void AddConsulClient(this IServiceCollection service)
         {
             var consulConfig = App.GetConfig<ConsulConfig>(ConsulConstant.CONSUL);

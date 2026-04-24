@@ -18,4 +18,8 @@
     <ProjectReference Include="..\..\Framework\Framework.Platform\Framework.Platform.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

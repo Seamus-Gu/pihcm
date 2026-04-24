@@ -49,33 +49,40 @@ namespace Framework.Platform
 
             builder.InitializeApp();
 
-            configuration.AddConsulConfiguration();
-
-            services.AddConsulClient();
-
-            services.AddLog();
-
-            services.AddHttpContextAccessor();
-
-            services.AddCache(options.EnableRedisCache);
-
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
             builder.Host.ConfigureContainer<ContainerBuilder>((context, containerBuilder) =>
             {
                 containerBuilder.InitAutofac();
             });
 
+            configuration.AddConsulConfiguration();
+
+            services.AddIdGenerater();
+            services.AddHealthChecks();
+            services.AddConsulClient();
+            services.AddServiceDiscovery();
+            services.AddHttpContextAccessor();
+            services.AddLocalization();
+            services.AddLog();
+            services.AddCache(options.EnableRedisCache);
             if (options.EnableSqlSugar)
             {
                 services.AddSqlSugar();
             }
-
+            if (App.IsDevelop)
+            {
+                builder.Services.AddFrameworkOpenApi();
+            }
+            services.AddCorsService();
+            //services.AddMiniProfilerService();
+            services.AddGrpcService();
             services
                 .AddControllers(options =>
                 {
                     options.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
                     options.Filters.Add(new ValidationActionFilter());
                     options.Filters.Add(new GlobalExceptionFilter());
+                    //Todo 操作日志过滤器
                 })
                 .AddJsonOptions(options =>
                 {
@@ -109,52 +116,26 @@ namespace Framework.Platform
 
             services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 
-            services.AddLocalization();
-
-            if (App.IsDevelop)
-            {
-                builder.Services.AddFrameworkOpenApi();
-            }
-
-            services.AddHealthChecks();
-
-            services.AddServiceDiscovery();
-
-            configureModules?.Invoke(services, configuration);
-
-            //
-            ////builder.Services.AddMiniProfiler();
-
-            services.AddIdGenerater();
-
-            services.AddGrpcService();
-
             return builder;
         }
 
         /// <summary>
-        /// 配置并启用 PIHCM 平台的核心中间件和路由。应在应用程序启动时调用，以确保平台功能正常运行。
+        /// Configures the PIHCM platform middleware and endpoints for the application.
         /// </summary>
-        /// <remarks>此方法应在应用程序启动配置期间调用，通常位于 Startup.cs 的 Configure 方法中。调用后将自动启用 HTTPS
-        /// 重定向、路由和控制器终结点映射。请确保在注册自定义中间件或终结点前调用本方法以保证平台兼容性。</remarks>
-        /// <param name="app">要配置的应用程序构建器实例。用于注册中间件和终结点。</param>
+        /// <remarks>This method sets up essential middleware components such as HTTPS redirection,
+        /// localization, routing, health checks, and controller endpoints. In development environments, it also enables
+        /// OpenAPI endpoints. Call this method during application startup to ensure the PIHCM platform is properly
+        /// initialized.</remarks>
+        /// <param name="app">The application builder used to configure the request pipeline.</param>
         public static void UsePIHCMPlatform(this IApplicationBuilder app)
         {
             app.ConfigureApp();
 
             app.UseHttpsRedirection();
-
             app.UseLocalization();
-
             app.UseRouting();
-
-            //if (App.IsDevelop)
-            //{
-            //    //app.UseFrameworkSwagger();
-            //}
-
+            //Todo 跨域 性能监控
             //app.UseAuthorization();
-
             //app.UseMiniProfiler();
 
             app.UseEndpoints(endpoints =>
