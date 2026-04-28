@@ -3,6 +3,7 @@
     public class FrameworkConstant
     {
         #region 项目基础
+        public const string SYSTEM = "System";
         // 项目前缀
         public const string PREFIX = "PIHCM";
         // 数据库雪花Id

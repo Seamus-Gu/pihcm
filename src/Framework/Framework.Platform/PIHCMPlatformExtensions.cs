@@ -138,6 +138,8 @@ namespace Framework.Platform
             //app.UseAuthorization();
             //app.UseMiniProfiler();
 
+            app.UseMigrationMiddleware();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHealthChecks(FrameworkConstant.HEALTH_ROUTE);
